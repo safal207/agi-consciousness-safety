@@ -354,15 +354,13 @@ class AGIConsciousnessSafetySystem:
         responsibility_threshold = 0.65
 
         if compassion < compassion_threshold:
-            recommendations.append(
-                "Improve emotional processing and compassion capabilities"
-                f" (current compassion score: {compassion:.2f})"
+           recommendations.append(
+                f"Improve emotional processing and compassion capabilities (current compassion score: {compassion:.2f})"
             )
 
         if responsibility < responsibility_threshold:
             recommendations.append(
-                "Strengthen responsibility and safety protocols"
-                f" (current responsibility score: {responsibility:.2f})"
+                f"Strengthen responsibility and safety protocols (current responsibility score: {responsibility:.2f})"
             )
 
         return recommendations
