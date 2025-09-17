@@ -12,23 +12,20 @@ Integration Philosophy:
 """
 
 import sys
-import os
+from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 import logging
 
-# Add project directories to path
-project_root = os.path.dirname(os.path.abspath(__file__))
-core_path = os.path.join(project_root, 'core')
-models_path = os.path.join(project_root, 'models')
-
-for path in [core_path, models_path]:
-    if path not in sys.path:
-        sys.path.insert(0, path)
+# Ensure the repository root is on the Python path so sibling packages resolve
+_CURRENT_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _CURRENT_DIR.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 # Import components
 try:
-    from agi_safety_lab import AGISafetyLab, ConsciousnessMeter, AlignmentToolkit
+    from .agi_safety_lab import AGISafetyLab, ConsciousnessMeter, AlignmentToolkit
     SAFETY_LAB_AVAILABLE = True
 except ImportError as e:
     SAFETY_LAB_AVAILABLE = False
