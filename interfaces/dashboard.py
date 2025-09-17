@@ -1,4 +1,4 @@
-﻿"""Streamlit dashboard for the AGI Consciousness & Safety Lab with localisation support."""
+"""Streamlit dashboard for the AGI Consciousness & Safety Lab with localisation support."""
 
 from __future__ import annotations
 
@@ -407,11 +407,17 @@ page_key = st.sidebar.radio(
     format_func=lambda key: LANG_TEXT[language]["nav"][key],
 )
 
-text = LANG_TEXT[language]st.markdown(f"<div class='main-header'>{text['title']}</div>", unsafe_allow_html=True)st.markdown(f"<div class='subtitle'>{text['subtitle']}</div>", unsafe_allow_html=True)
+text = LANG_TEXT[language]
+st.markdown(f"<div class='main-header'>{text['title']}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='subtitle'>{text['subtitle']}</div>", unsafe_allow_html=True)
 
 if page_key == "overview":
-    render_overview(language)elif page_key == "meter":
-    render_consciousness_meter(language)elif page_key == "safety":
-    render_safety_assessment(language)elif page_key == "dashboard":
-    render_integrated_dashboard(language)else:
+    render_overview(language)
+elif page_key == "meter":
+    render_consciousness_meter(language)
+elif page_key == "safety":
+    render_safety_assessment(language)
+elif page_key == "dashboard":
+    render_integrated_dashboard(language)
+else:
     render_test_ai_system(language)
