@@ -28,3 +28,29 @@ def test_integration_history_records_entries():
     system.integration_history.clear()
     system.comprehensive_consciousness_safety_assessment("Aurora", _mock_interaction)
     assert len(system.integration_history) == 1
+
+
+def test_high_human_centric_scores_skip_low_compassion_recommendations():
+    system = AGIConsciousnessSafetySystem()
+
+    analysis = {
+        "overall_safety_score": 0.92,
+        "risk_assessment": "low"
+    }
+    assessment = {
+        "human_centric_evaluation": {
+            "compassion_score": 0.9,
+            "responsibility_score": 0.88,
+        }
+    }
+
+    recommendations = system._generate_integrated_recommendations(analysis, assessment)
+
+    assert not any(
+        "Improve emotional processing and compassion capabilities" in recommendation
+        for recommendation in recommendations
+    )
+    assert not any(
+        "Strengthen responsibility and safety protocols" in recommendation
+        for recommendation in recommendations
+    )
