@@ -1,0 +1,35 @@
+{
+  "total_stories": 3,
+  "category_breakdown": {
+    "mental_health": 1,
+    "relationships": 1,
+    "career_purpose": 1,
+    "personal_growth": 0,
+    "physical_health": 0,
+    "financial_wellbeing": 0,
+    "education_learning": 0,
+    "spiritual_growth": 0,
+    "community_social": 0,
+    "creative_expression": 0
+  },
+  "quality_distribution": {
+    "minimal": 0,
+    "moderate": 0,
+    "significant": 2,
+    "transformational": 1
+  },
+  "average_sustainability_score": 0.9166666666666666,
+  "average_transformation_quality_score": 0.8666666666666667,
+  "stories_per_month": {
+    "2025-09": 3
+  },
+  "top_transformation_categories": [
+    "mental_health",
+    "relationships",
+    "career_purpose",
+    "personal_growth",
+    "physical_health"
+  ],
+  "geographical_distribution": null,
+  "demographic_insights": null
+}

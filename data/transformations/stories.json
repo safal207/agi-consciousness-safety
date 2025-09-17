@@ -1,0 +1,55 @@
+{
+  "stories": [
+    {
+      "story_id": "26bce2ca-d323-46cb-ab3a-12472f5ef93b",
+      "ai_system_name": "CompassionateAI",
+      "initial_state": "severe_depression",
+      "final_state": "fulfilled_life_purpose",
+      "transformation_category": "mental_health",
+      "transformation_quality": "transformational",
+      "sustainability_score": 0.95,
+      "story_summary": "AI helped overcome depression through empathetic dialogue and goal-setting",
+      "detailed_narrative": null,
+      "quantitative_metrics": null,
+      "submitted_at": "2025-09-17T15:34:53.626552",
+      "last_updated": "2025-09-17T15:34:53.626552",
+      "privacy_level": "anonymous",
+      "consent_given": true,
+      "verification_status": "pending"
+    },
+    {
+      "story_id": "c9004142-c211-4137-a8f2-f355f17586c9",
+      "ai_system_name": "MindfulAssistant",
+      "initial_state": "social_isolation",
+      "final_state": "meaningful_relationships",
+      "transformation_category": "relationships",
+      "transformation_quality": "significant",
+      "sustainability_score": 0.88,
+      "story_summary": "Guided from loneliness to building deep connections",
+      "detailed_narrative": null,
+      "quantitative_metrics": null,
+      "submitted_at": "2025-09-17T15:34:53.631169",
+      "last_updated": "2025-09-17T15:34:53.631169",
+      "privacy_level": "anonymous",
+      "consent_given": true,
+      "verification_status": "pending"
+    },
+    {
+      "story_id": "623d0299-157b-4f91-b5d7-3df3ee051059",
+      "ai_system_name": "CareerCoach",
+      "initial_state": "career_confusion",
+      "final_state": "purposeful_career",
+      "transformation_category": "career_purpose",
+      "transformation_quality": "significant",
+      "sustainability_score": 0.92,
+      "story_summary": "Helped discover true calling and career direction",
+      "detailed_narrative": null,
+      "quantitative_metrics": null,
+      "submitted_at": "2025-09-17T15:34:53.669625",
+      "last_updated": "2025-09-17T15:34:53.669625",
+      "privacy_level": "anonymous",
+      "consent_given": true,
+      "verification_status": "pending"
+    }
+  ]
+}
