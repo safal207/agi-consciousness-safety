@@ -345,9 +345,25 @@ class TransformationImpactTracker:
             # Category insights
             if analytics.top_transformation_categories:
                 top_cat = analytics.top_transformation_categories[0]
-                insights.append(f"Mental health shows highest transformation potential")
+                formatted_category = self._format_category_label(top_cat)
+                if formatted_category:
+                    insights.append(f"{formatted_category} shows highest transformation potential")
 
         return insights
+
+    @staticmethod
+    def _format_category_label(category_value: str) -> str:
+        """Format a category value into a human-friendly label."""
+        if not category_value:
+            return ""
+
+        try:
+            category_enum = TransformationCategory(category_value)
+            label_source = category_enum.value
+        except ValueError:
+            label_source = category_value
+
+        return label_source.replace('_', ' ').title()
 
     def _generate_recommendations(self) -> List[str]:
         """Generate recommendations based on data."""
