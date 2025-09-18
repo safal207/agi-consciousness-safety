@@ -14,8 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get PR diff
-        run: gh pr diff ${{ github.event.issue.number }} > diff.txt
+      - name: Get PR diff (limited)
+        run: |
+          # Берём только первые 2000 строк diff, чтобы не перегружать API
+          gh pr diff ${{ github.event.issue.number }} | head -n 2000 > diff.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -27,7 +29,7 @@ jobs:
           # Формируем JSON-запрос с плейсхолдером
           cat > request.json <<'EOF'
           {
-            "model": "claude-3-opus-20240229",
+            "model": "claude-3-sonnet-20240229",
             "max_tokens": 1000,
             "messages": [
               {
@@ -38,16 +40,19 @@ jobs:
           }
           EOF
 
-          # Подставляем diff, читая его прямо из файла, чтобы избежать лимита аргументов
+          # Подставляем diff, читая его прямо из файла
           awk 'NR==FNR {diff=$0; next} {gsub(/DIFF_PLACEHOLDER/, diff)}1' diff.json request.json > request_filled.json
           mv request_filled.json request.json
 
       - name: Call Claude API
         run: |
-          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+          # Отправляем запрос и логируем полный ответ
+          curl -s https://api.anthropic.com/v1/messages \
             -H "x-api-key: ${{ secrets.CLAUDE_API_KEY }}" \
             -H "content-type: application/json" \
-            -d @request.json | jq -r '.content[0].text // "❌ Claude не вернул ответа"')
+            -d @request.json | tee api_response.json
+
+          RESPONSE=$(jq -r '.content[0].text // "❌ Claude не вернул ответа"' api_response.json)
 
           echo "$RESPONSE" > response.txt
           gh pr comment ${{ github.event.issue.number }} --body-file response.txt
