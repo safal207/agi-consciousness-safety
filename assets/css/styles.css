@@ -207,21 +207,9 @@ body {
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: var(--slider-thumb-size);
-    height: var(--slider-thumb-size);
-    border-radius: 50%;
-    background: var(--accent-primary);
-    border: 2px solid white;
-    box-shadow: 0 3px 8px rgba(10, 20, 50, 0.35);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
 }
 
-.slider:active::-webkit-slider-thumb {
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(10, 20, 50, 0.45);
-}
-
+.slider::-webkit-slider-thumb,
 .slider::-moz-range-thumb {
     width: var(--slider-thumb-size);
     height: var(--slider-thumb-size);
@@ -233,6 +221,7 @@ body {
     cursor: pointer;
 }
 
+.slider:active::-webkit-slider-thumb,
 .slider:active::-moz-range-thumb {
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(10, 20, 50, 0.45);
@@ -331,6 +320,7 @@ body {
     overflow: hidden;
     transition: transform var(--transition-base), box-shadow var(--transition-base);
     box-shadow: 0 12px 30px rgba(40, 30, 80, 0.18);
+    --philosophy-card-shadow-active: 0 18px 38px rgba(40, 30, 80, 0.28);
 }
 
 .philosophy-card::before {
@@ -341,16 +331,14 @@ body {
     background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
 }
 
-.philosophy-card:hover,
-.philosophy-card:focus-visible,
-.philosophy-card.is-active {
+.philosophy-card:is(:hover, :focus-visible, .is-active) {
     transform: translateY(-8px);
-    box-shadow: 0 18px 38px rgba(40, 30, 80, 0.28);
+    box-shadow: var(--philosophy-card-shadow-active);
 }
 
 .philosophy-card:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.28), 0 18px 38px rgba(40, 30, 80, 0.28);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.28), var(--philosophy-card-shadow-active);
 }
 
 .philosophy-icon {

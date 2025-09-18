@@ -13,12 +13,16 @@ export const translations = Object.freeze({
         'page-title': '🌸 AGI Consciousness & Safety - Lotus Blossoms',
         'language-button-english': 'EN',
         'language-button-russian': 'RU',
+        'language-button-english-aria': 'Switch interface language to English',
+        'language-button-russian-aria': 'Switch interface language to Russian',
         'language-toggle-label': 'Language selection',
         'main-title': '🌸 AGI Consciousness & Safety',
         'subtitle': 'Revolutionary approach to safe and conscious AI',
         'lotus-quote': '"The lotus blossoms in muddy water - true consciousness emerges from complexity and challenge"',
         'demo-title': '🎮 Interactive Consciousness Assessment',
         'demo-subtitle': 'Adjust the sliders to explore how consciousness, safety, and compassion interact in our framework.',
+        'slider-roledescription': 'Interactive slider control',
+        'slider-value-label': 'Current value',
         'consciousness-title': 'Consciousness Level',
         'consciousness-desc': 'Self-awareness and understanding',
         'safety-title': 'Safety Score',
@@ -58,12 +62,16 @@ export const translations = Object.freeze({
         'page-title': '🌸 AGI Сознание и Безопасность - Цветение Лотоса',
         'language-button-english': 'EN',
         'language-button-russian': 'RU',
+        'language-button-english-aria': 'Переключить язык интерфейса на английский',
+        'language-button-russian-aria': 'Переключить язык интерфейса на русский',
         'language-toggle-label': 'Выбор языка интерфейса',
         'main-title': '🌸 AGI Сознание и Безопасность',
         'subtitle': 'Революционный подход к безопасному и осознанному ИИ',
         'lotus-quote': '"Лотос расцветает в мутной воде - истинное сознание возникает из сложности и испытаний"',
         'demo-title': '🎮 Интерактивная Оценка Сознания',
         'demo-subtitle': 'Настройте ползунки, чтобы увидеть, как сочетаются сознание, безопасность и сострадание в нашей модели.',
+        'slider-roledescription': 'Интерактивный ползунок',
+        'slider-value-label': 'Текущее значение',
         'consciousness-title': 'Уровень Сознания',
         'consciousness-desc': 'Самосознание и понимание',
         'safety-title': 'Оценка Безопасности',
@@ -145,6 +153,30 @@ const state = {
 const sliderElements = new Map();
 const resultElements = {};
 
+const activationKeys = new Set(['Enter', ' ']);
+
+function getLanguageStrings(lang) {
+    return translations[lang] ?? translations.en;
+}
+
+function configureLiveRegion(element) {
+    if (!element) {
+        return;
+    }
+    element.setAttribute('role', 'status');
+    element.setAttribute('aria-live', 'polite');
+    element.setAttribute('aria-atomic', 'true');
+}
+
+function attachKeyboardActivation(element, callback) {
+    element.addEventListener('keydown', event => {
+        if (activationKeys.has(event.key)) {
+            event.preventDefault();
+            callback(event);
+        }
+    });
+}
+
 export function clampValue(value, min = 0, max = 1) {
     if (!Number.isFinite(value)) {
         return min;
@@ -197,9 +229,18 @@ function updateSliderFill(slider, value, def) {
 
 function formatAriaValueText(def, value, lang) {
     const labelKey = `${def.slug}-title`;
-    const label = translations[lang]?.[labelKey] ?? def.slug;
+    const strings = getLanguageStrings(lang);
+    const label = strings[labelKey] ?? def.slug;
     const percentText = formatPercent(value, lang);
     return `${percentText} — ${label}`;
+}
+
+function formatValueDisplayLabel(def, value, lang, strings = getLanguageStrings(lang)) {
+    const labelKey = `${def.slug}-title`;
+    const label = strings[labelKey] ?? def.slug;
+    const prefix = strings['slider-value-label'] ?? 'Current value';
+    const decimal = formatDecimal(value, lang);
+    return `${prefix}: ${decimal} — ${label}`;
 }
 
 function renderSliders(doc) {
@@ -215,12 +256,14 @@ function renderSliders(doc) {
         const group = doc.createElement('div');
         group.className = 'control-group';
         group.dataset.slider = def.slug;
+        group.setAttribute('role', 'group');
 
         const title = doc.createElement('h3');
         title.className = 'control-title';
         title.id = `${def.slug}-title`;
         title.dataset.i18n = `${def.slug}-title`;
         group.append(title);
+        group.setAttribute('aria-labelledby', title.id);
 
         const sliderContainer = doc.createElement('div');
         sliderContainer.className = 'slider-container';
@@ -237,12 +280,14 @@ function renderSliders(doc) {
         slider.setAttribute('aria-describedby', `${def.slug}-desc`);
         slider.setAttribute('aria-valuemin', String(def.min));
         slider.setAttribute('aria-valuemax', String(def.max));
+        slider.setAttribute('aria-orientation', 'horizontal');
+        slider.setAttribute('role', 'slider');
         slider.dataset.sliderSlug = def.slug;
 
         const valueDisplay = doc.createElement('div');
         valueDisplay.className = 'value-display';
         valueDisplay.id = `${def.slug}-value`;
-        valueDisplay.setAttribute('aria-live', 'polite');
+        configureLiveRegion(valueDisplay);
 
         sliderContainer.append(slider, valueDisplay);
         group.append(sliderContainer);
@@ -252,6 +297,8 @@ function renderSliders(doc) {
         description.id = `${def.slug}-desc`;
         description.dataset.i18n = `${def.slug}-desc`;
         group.append(description);
+        group.setAttribute('aria-describedby', description.id);
+        slider.setAttribute('aria-controls', valueDisplay.id);
 
         container.append(group);
         sliderElements.set(def.slug, { slider, valueDisplay, description, group, title });
@@ -264,6 +311,8 @@ function registerResultElements(doc) {
     resultElements.trustScore = doc.getElementById('trust-score');
     resultElements.readiness = doc.getElementById('readiness');
     resultElements.transformationCount = doc.getElementById('transformation-count');
+
+    Object.values(resultElements).forEach(configureLiveRegion);
 }
 
 function updateLanguageToggleState(doc, language) {
@@ -278,15 +327,13 @@ function updateLanguageToggleState(doc, language) {
 function attachLanguageListeners(doc) {
     const buttons = doc.querySelectorAll('.lang-btn');
     buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            changeLanguage(doc, btn.dataset.lang);
-        });
-        btn.addEventListener('keydown', event => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                changeLanguage(doc, btn.dataset.lang);
-            }
-        });
+        const lang = btn.dataset.lang;
+        if (!lang) {
+            return;
+        }
+        const handleActivate = () => changeLanguage(doc, lang);
+        btn.addEventListener('click', handleActivate);
+        attachKeyboardActivation(btn, handleActivate);
     });
 }
 
@@ -302,8 +349,9 @@ function attachSliderListeners(doc) {
             setSliderValue(doc, def, value, { updateState: true, render: true });
         };
 
-        elements.slider.addEventListener('input', handler);
-        elements.slider.addEventListener('change', handler);
+        ['input', 'change'].forEach(eventName => {
+            elements.slider.addEventListener(eventName, handler);
+        });
     });
 }
 
@@ -324,12 +372,7 @@ function attachCardInteractions(doc) {
         };
 
         card.addEventListener('click', activate);
-        card.addEventListener('keydown', event => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                activate();
-            }
-        });
+        attachKeyboardActivation(card, activate);
     });
 }
 
@@ -348,12 +391,19 @@ export function setSliderValue(doc, defOrSlug, rawValue, options = {}) {
 
     const { slider, valueDisplay } = elements;
     slider.value = String(sanitized);
+    const strings = getLanguageStrings(state.currentLanguage);
     slider.setAttribute('aria-valuenow', sanitized.toFixed(2));
     slider.setAttribute('aria-valuetext', formatAriaValueText(def, sanitized, state.currentLanguage));
+    slider.setAttribute('aria-roledescription', strings['slider-roledescription'] ?? 'Slider control');
     updateSliderFill(slider, sanitized, def);
 
     if (valueDisplay) {
-        valueDisplay.textContent = formatDecimal(sanitized, state.currentLanguage);
+        const decimalText = formatDecimal(sanitized, state.currentLanguage);
+        valueDisplay.textContent = decimalText;
+        valueDisplay.setAttribute(
+            'aria-label',
+            formatValueDisplayLabel(def, sanitized, state.currentLanguage, strings)
+        );
     }
 
     if (updateState) {
@@ -427,7 +477,7 @@ function getLanguage(lang) {
 
 export function applyTranslations(doc, lang) {
     const language = getLanguage(lang);
-    const strings = translations[language] ?? {};
+    const strings = getLanguageStrings(language);
 
     doc.documentElement.setAttribute('lang', language);
 
@@ -505,7 +555,7 @@ export function findMissingTranslationKeys(doc) {
     const missing = {};
 
     supportedLanguages.forEach(lang => {
-        const strings = translations[lang] ?? {};
+        const strings = getLanguageStrings(lang);
         const absent = Array.from(keys).filter(key => !(key in strings));
         if (absent.length) {
             missing[lang] = absent;

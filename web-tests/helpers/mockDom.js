@@ -503,6 +503,8 @@ export function createMockDocument() {
         button.setAttribute('type', 'button');
         button.dataset.lang = lang;
         setDataI18n(button, key);
+        button.setAttribute('data-i18n-attr', 'aria-label');
+        button.setAttribute('data-i18n-attr-key', `${key}-aria`);
         button.setAttribute('aria-pressed', pressed ? 'true' : 'false');
         languageToggle.appendChild(button);
         return button;

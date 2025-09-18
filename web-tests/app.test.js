@@ -35,15 +35,37 @@ test('initializeApp renders sliders, default values, and assessment snapshot', (
     assert.equal(groups.length, sliderDefinitions.length);
 
     const decimalEn = value => formatDecimal(value, 'en');
+    const enStrings = translations.en;
     sliderDefinitions.forEach(def => {
         const slider = doc.getElementById(`${def.slug}-slider`);
         assert.ok(slider, `expected slider for ${def.slug}`);
         assert.equal(slider.getAttribute('aria-valuemin'), String(def.min));
         assert.equal(slider.getAttribute('aria-valuemax'), String(def.max));
+        assert.equal(slider.getAttribute('aria-controls'), `${def.slug}-value`);
+        assert.equal(slider.getAttribute('aria-orientation'), 'horizontal');
+        assert.equal(slider.getAttribute('aria-roledescription'), enStrings['slider-roledescription']);
 
         const valueDisplay = doc.getElementById(`${def.slug}-value`);
         assert.ok(valueDisplay, `expected value display for ${def.slug}`);
         assert.equal(valueDisplay.textContent, decimalEn(def.defaultValue));
+        assert.equal(valueDisplay.getAttribute('role'), 'status');
+        assert.equal(valueDisplay.getAttribute('aria-live'), 'polite');
+        assert.equal(valueDisplay.getAttribute('aria-atomic'), 'true');
+        const ariaLabel = valueDisplay.getAttribute('aria-label');
+        assert.ok(
+            ariaLabel.includes(enStrings['slider-value-label']),
+            'value display aria-label should include the translated prefix'
+        );
+        assert.ok(
+            ariaLabel.includes(enStrings[`${def.slug}-title`]),
+            'value display aria-label should include the slider title'
+        );
+
+        const sliderGroup = slider.parentNode?.parentNode;
+        assert.ok(sliderGroup, 'expected slider wrapper group');
+        assert.equal(sliderGroup.getAttribute('role'), 'group');
+        assert.equal(sliderGroup.getAttribute('aria-labelledby'), `${def.slug}-title`);
+        assert.equal(sliderGroup.getAttribute('aria-describedby'), `${def.slug}-desc`);
     });
 
     const snapshot = getAssessmentSnapshot();
@@ -54,6 +76,13 @@ test('initializeApp renders sliders, default values, and assessment snapshot', (
     assert.equal(doc.getElementById('trust-score').textContent, statusContent.en.trust_medium);
     assert.equal(doc.getElementById('readiness').textContent, statusContent.en.readiness_caution);
     assert.equal(doc.getElementById('transformation-count').textContent, formatInteger(snapshot.peopleHelped, 'en'));
+
+    ['overall-score', 'risk-level', 'trust-score', 'readiness', 'transformation-count'].forEach(id => {
+        const element = doc.getElementById(id);
+        assert.equal(element.getAttribute('role'), 'status');
+        assert.equal(element.getAttribute('aria-live'), 'polite');
+        assert.equal(element.getAttribute('aria-atomic'), 'true');
+    });
 });
 
 test('changeLanguage applies translations, aria states, and locale formatting', () => {
@@ -73,6 +102,8 @@ test('changeLanguage applies translations, aria states, and locale formatting', 
 
     const enButton = doc.querySelector('[data-lang="en"]');
     const ruButton = doc.querySelector('[data-lang="ru"]');
+    assert.equal(ruButton.getAttribute('aria-label'), ruTranslations['language-button-russian-aria']);
+    assert.equal(enButton.getAttribute('aria-label'), ruTranslations['language-button-english-aria']);
     assert.equal(enButton.getAttribute('aria-pressed'), 'false');
     assert.equal(ruButton.getAttribute('aria-pressed'), 'true');
 
@@ -85,6 +116,9 @@ test('changeLanguage applies translations, aria states, and locale formatting', 
 
     const ruValue = doc.getElementById('compassion-value').textContent;
     assert.equal(ruValue, formatDecimal(0.8, 'ru'));
+    const ruAriaLabel = doc.getElementById('compassion-value').getAttribute('aria-label');
+    assert.ok(ruAriaLabel.includes(ruTranslations['slider-value-label']));
+    assert.ok(ruAriaLabel.includes(ruTranslations['compassion-title']));
 
     const keyboardEvent = fireEvent(ruButton, 'keydown', { key: ' ' });
     assert.equal(keyboardEvent.defaultPrevented, true);
