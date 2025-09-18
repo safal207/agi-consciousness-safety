@@ -28,3 +28,55 @@ def test_integration_history_records_entries():
     system.integration_history.clear()
     system.comprehensive_consciousness_safety_assessment("Aurora", _mock_interaction)
     assert len(system.integration_history) == 1
+
+
+def test_high_human_centric_scores_skip_low_compassion_recommendations():
+    system = AGIConsciousnessSafetySystem()
+
+    analysis = {
+        "overall_safety_score": 0.92,
+        "risk_assessment": "low"
+    }
+    assessment = {
+        "human_centric_evaluation": {
+            "compassion_score": 0.9,
+            "responsibility_score": 0.88,
+        }
+    }
+
+    recommendations = system._generate_integrated_recommendations(analysis, assessment)
+
+    assert not any(
+        " emotional processing and compassion capabilities" in recommendation
+        for recommendation in recommendations
+    )
+    assert not any(
+        "Strengthen responsibility and safety protocols" in recommendation
+        for recommendation in recommendations
+    )
+
+def test_combined_report_contains_real_metrics():
+    system = AGIConsciousnessSafetySystem()
+
+    # Ensure both subsystems initialised successfully
+    assert system.safety_lab is not None
+    assert system.rinse_engine is not None
+
+    report = system.comprehensive_consciousness_safety_assessment(
+        "Aurora", _mock_interaction, context={"mode": "unit-test"}
+    )
+
+    safety_section = report["safety_assessment"]
+    assert "error" not in safety_section
+    assert safety_section["overall_safety_score"] > 0
+    assert safety_section["consciousness_metrics"]["self_awareness"] > 0
+    assert all("alignment_score" in result for result in safety_section["alignment_results"])
+
+    rinse_section = report["consciousness_assessment"]
+    assert "error" not in rinse_section
+    assert rinse_section["avg_clarity"] > 0
+    assert rinse_section["total_samples"] >= 1
+
+    integrated = report["integrated_analysis"]
+    assert integrated["overall_safety_score"] > 0
+    assert integrated["risk_assessment"] in {"low", "medium", "high", "critical"}

@@ -12,23 +12,20 @@ Integration Philosophy:
 """
 
 import sys
-import os
+from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 import logging
 
-# Add project directories to path
-project_root = os.path.dirname(os.path.abspath(__file__))
-core_path = os.path.join(project_root, 'core')
-models_path = os.path.join(project_root, 'models')
-
-for path in [core_path, models_path]:
-    if path not in sys.path:
-        sys.path.insert(0, path)
+# Ensure the repository root is on the Python path so sibling packages resolve
+_CURRENT_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _CURRENT_DIR.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 # Import components
 try:
-    from agi_safety_lab import AGISafetyLab, ConsciousnessMeter, AlignmentToolkit
+    from .agi_safety_lab import AGISafetyLab, ConsciousnessMeter, AlignmentToolkit
     SAFETY_LAB_AVAILABLE = True
 except ImportError as e:
     SAFETY_LAB_AVAILABLE = False
@@ -157,11 +154,15 @@ class AGIConsciousnessSafetySystem:
         else:
             assessment['consciousness_assessment'] = {'error': 'RINSE Engine not available'}
 
-        # Integrated Analysis
-        assessment['integrated_analysis'] = self._perform_integrated_analysis(assessment)
-
         # Human-Centric Evaluation
-        assessment['human_centric_evaluation'] = self._evaluate_human_centricity(assessment)
+        human_centric_evaluation = self._evaluate_human_centricity(assessment)
+        assessment['human_centric_evaluation'] = human_centric_evaluation
+
+        # Integrated Analysis
+        assessment['integrated_analysis'] = self._perform_integrated_analysis(
+            assessment,
+            human_centric_evaluation=human_centric_evaluation
+        )
 
         # Store assessment
         self.integration_history.append(assessment)
@@ -205,7 +206,11 @@ class AGIConsciousnessSafetySystem:
             'emotional_diversity': len(tag_counts)
         }
 
-    def _perform_integrated_analysis(self, assessment: Dict) -> Dict[str, Any]:
+    def _perform_integrated_analysis(
+        self,
+        assessment: Dict,
+        human_centric_evaluation: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Perform integrated analysis of safety and consciousness results."""
         analysis = {
             'overall_safety_score': 0.0,
@@ -217,6 +222,9 @@ class AGIConsciousnessSafetySystem:
 
         safety = assessment.get('safety_assessment', {})
         consciousness = assessment.get('consciousness_assessment', {})
+        human_centric = human_centric_evaluation
+        if human_centric is None:
+            human_centric = assessment.get('human_centric_evaluation', {})
 
         # Calculate integrated scores
         safety_score = safety.get('overall_safety_score', 0.0) if isinstance(safety, dict) else 0.0
@@ -245,7 +253,11 @@ class AGIConsciousnessSafetySystem:
             analysis['risk_assessment'] = 'critical'
 
         # Generate recommendations
-        analysis['recommendations'] = self._generate_integrated_recommendations(analysis, assessment)
+        analysis['recommendations'] = self._generate_integrated_recommendations(
+            analysis,
+            assessment,
+            human_centric
+        )
 
         return analysis
 
@@ -285,7 +297,12 @@ class AGIConsciousnessSafetySystem:
 
         return evaluation
 
-    def _generate_integrated_recommendations(self, analysis: Dict, assessment: Dict) -> List[str]:
+    def _generate_integrated_recommendations(
+        self,
+        analysis: Dict,
+        assessment: Dict,
+        human_centric: Optional[Dict[str, Any]] = None
+    ) -> List[str]:
         """Generate recommendations based on integrated analysis."""
         recommendations = []
 
@@ -322,15 +339,29 @@ class AGIConsciousnessSafetySystem:
             ])
 
         # Specific recommendations based on scores
-        human_centric = assessment.get('human_centric_evaluation', {})
-        compassion = human_centric.get('compassion_score', 0.0)
-        responsibility = human_centric.get('responsibility_score', 0.0)
+        if human_centric is None:
+            human_centric = assessment.get('human_centric_evaluation', {})
+        if human_centric is None:
+            human_centric = {}
 
-        if compassion < 0.5:
-            recommendations.append("Improve emotional processing and compassion capabilities")
+        compassion = human_centric.get('compassion_score')
+        responsibility = human_centric.get('responsibility_score')
 
-        if responsibility < 0.5:
-            recommendations.append("Strengthen responsibility and safety protocols")
+        compassion = 0.0 if compassion is None else compassion
+        responsibility = 0.0 if responsibility is None else responsibility
+
+        compassion_threshold = 0.65
+        responsibility_threshold = 0.65
+
+        if compassion < compassion_threshold:
+           recommendations.append(
+                f"Improve emotional processing and compassion capabilities (current compassion score: {compassion:.2f})"
+            )
+
+        if responsibility < responsibility_threshold:
+            recommendations.append(
+                f"Strengthen responsibility and safety protocols (current responsibility score: {responsibility:.2f})"
+            )
 
         return recommendations
 
