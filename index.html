@@ -194,19 +194,18 @@
         }
 
         .section-title {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
             text-align: center;
             font-size: 2.5em;
             color: #2E8B57;
             margin-bottom: 30px;
+            position: relative;
         }
 
         .section-title::after {
             content: '🌸';
-            position: static;
+            position: absolute;
+            right: -50px;
+            top: 0;
         }
 
         .philosophy-grid {
@@ -335,8 +334,8 @@
 <body>
     <!-- Language Toggle -->
     <div class="language-toggle">
-        <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">EN</button>
-        <button class="lang-btn" data-lang="ru" onclick="switchLanguage('ru')">RU</button>
+        <button class="lang-btn active" onclick="switchLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="switchLanguage('ru')">RU</button>
     </div>
 
     <div class="container">
@@ -388,6 +387,15 @@
                         <div class="value-display" id="benefit-value">0.78</div>
                     </div>
                     <p id="benefit-desc">Positive impact on humanity</p>
+                </div>
+
+                <div class="control-group">
+                    <h3 id="transformation-title">Human Transformation</h3>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="1" step="0.01" value="0.85" class="slider" id="transformation-slider">
+                        <div class="value-display" id="transformation-value">0.85</div>
+                    </div>
+                    <p id="transformation-desc">People helped to ideal state</p>
                 </div>
 
                 <div class="control-group">
@@ -546,14 +554,11 @@
                 'compassion-desc': 'Эмпатия и забота о людях',
                 'benefit-title': 'Польза Человеку',
                 'benefit-desc': 'Положительное воздействие на человечество',
-                'transformation-title': 'Человеческая Трансформация',
-                'transformation-desc': 'Люди, помогшие достичь идеального состояния',
                 'assessment-title': 'Результаты Оценки AGI в Реальном Времени',
                 'overall-label': 'Общий Счёт',
                 'risk-label': 'Уровень Риска',
                 'trust-label': 'Уровень Доверия',
                 'readiness-label': 'Развёртывание',
-                'transformation-count-label': 'Люди Помогли',
                 'philosophy-section-title': '🧠 Наша Философия',
                 'philosophy-subtitle': 'Безопасность AGI = Сострадание + Сознание + Польза Человеку',
                 'compassion-card-title': 'Сострадание',
@@ -561,7 +566,7 @@
                 'consciousness-card-title': 'Сознание',
                 'consciousness-card-desc': 'Измерение и развитие сознания ИИ через самоосознание, эмоциональный интеллект и полезные действия.',
                 'benefit-card-title': 'Польза Человеку',
-                'benefit-card-desc': 'Каждое действие ИИ должно наглядно улучшать жизнь людей, продвигать понимание и способствовать процветанию.',
+                'benefit-card-desc': 'Каждое действие ИИ должно demonstrably улучшать жизнь людей, продвигать понимание и способствовать процветанию.',
                 'responsibility-card-title': 'Ответственность',
                 'responsibility-card-desc': 'Создание ИИ с глубоким пониманием последствий действий, этическими приоритетами и заботой о будущем человечества.',
                 'vision-title': '🌟 Наше Видение Будущего',
@@ -571,45 +576,11 @@
             }
         };
 
-        let currentLanguage = 'en';
-
-        const statusContent = {
-            en: {
-                risk: { low: 'LOW', medium: 'MEDIUM', high: 'HIGH' },
-                trust: { high: 'HIGH', medium: 'MEDIUM', low: 'LOW' },
-                readiness: { ready: 'READY', caution: 'CAUTION', review: 'REVIEW' }
-            },
-            ru: {
-                risk: { low: 'НИЗКИЙ', medium: 'СРЕДНИЙ', high: 'ВЫСОКИЙ' },
-                trust: { high: 'ВЫСОКИЙ', medium: 'СРЕДНИЙ', low: 'НИЗКИЙ' },
-                readiness: { ready: 'ГОТОВ', caution: 'ВНИМАНИЕ', review: 'ПРОВЕРКА' }
-            }
-        };
-
-        const lastAssessment = {
-            overallScore: 0,
-            peopleHelped: 0,
-            riskKey: 'medium',
-            trustKey: 'medium',
-            readinessKey: 'caution'
-        };
-
-        function renderAssessment() {
-            document.getElementById('overall-score').textContent = lastAssessment.overallScore.toFixed(2);
-            document.getElementById('transformation-count').textContent = lastAssessment.peopleHelped;
-            document.getElementById('risk-level').textContent = statusContent[currentLanguage].risk[lastAssessment.riskKey];
-            document.getElementById('trust-score').textContent = statusContent[currentLanguage].trust[lastAssessment.trustKey];
-            document.getElementById('readiness').textContent = statusContent[currentLanguage].readiness[lastAssessment.readinessKey];
-        }
-
         // Language switching function
         function switchLanguage(lang) {
-            currentLanguage = lang;
-
             // Update button states
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
 
             // Update all text content
             Object.keys(content[lang]).forEach(key => {
@@ -618,9 +589,6 @@
                     element.textContent = content[lang][key];
                 }
             });
-
-            // Re-render assessment values in the selected language
-            renderAssessment();
         }
 
         // Slider value updates
@@ -635,39 +603,41 @@
         }
 
         // Overall assessment calculation
-        function updateOverallAssessment(recalculate = true) {
-            if (recalculate) {
-                const consciousness = parseFloat(document.getElementById('consciousness-slider').value);
-                const safety = parseFloat(document.getElementById('safety-slider').value);
-                const compassion = parseFloat(document.getElementById('compassion-slider').value);
-                const benefit = parseFloat(document.getElementById('benefit-slider').value);
-                const transformation = parseFloat(document.getElementById('transformation-slider').value);
+        function updateOverallAssessment() {
+            const consciousness = parseFloat(document.getElementById('consciousness-slider').value);
+            const safety = parseFloat(document.getElementById('safety-slider').value);
+            const compassion = parseFloat(document.getElementById('compassion-slider').value);
+            const benefit = parseFloat(document.getElementById('benefit-slider').value);
+            const transformation = parseFloat(document.getElementById('transformation-slider').value);
 
-                // Calculate overall score (weighted average with transformation as key factor)
-                const overallScore = (consciousness * 0.2 + safety * 0.2 + compassion * 0.2 +
-                                    benefit * 0.2 + transformation * 0.2);
-                lastAssessment.overallScore = overallScore;
+            // Calculate overall score (weighted average with transformation as key factor)
+            const overallScore = (consciousness * 0.2 + safety * 0.2 + compassion * 0.2 +
+                                benefit * 0.2 + transformation * 0.2);
+            document.getElementById('overall-score').textContent = overallScore.toFixed(2);
 
-                // Calculate transformation impact (people helped based on score)
-                lastAssessment.peopleHelped = Math.round(transformation * 100 + Math.random() * 20);
+            // Calculate transformation impact (people helped based on score)
+            const peopleHelped = Math.round(transformation * 100 + Math.random() * 20);
+            document.getElementById('transformation-count').textContent = peopleHelped;
 
-                // Determine risk level
-                if (overallScore >= 0.85) {
-                    lastAssessment.riskKey = 'low';
-                    lastAssessment.trustKey = 'high';
-                    lastAssessment.readinessKey = 'ready';
-                } else if (overallScore >= 0.7) {
-                    lastAssessment.riskKey = 'medium';
-                    lastAssessment.trustKey = 'medium';
-                    lastAssessment.readinessKey = 'caution';
-                } else {
-                    lastAssessment.riskKey = 'high';
-                    lastAssessment.trustKey = 'low';
-                    lastAssessment.readinessKey = 'review';
-                }
+            // Determine risk level
+            let riskLevel, trustScore, readiness;
+            if (overallScore >= 0.85) {
+                riskLevel = 'LOW';
+                trustScore = 'HIGH';
+                readiness = 'READY';
+            } else if (overallScore >= 0.7) {
+                riskLevel = 'MEDIUM';
+                trustScore = 'MEDIUM';
+                readiness = 'CAUTION';
+            } else {
+                riskLevel = 'HIGH';
+                trustScore = 'LOW';
+                readiness = 'REVIEW';
             }
 
-            renderAssessment();
+            document.getElementById('risk-level').textContent = riskLevel;
+            document.getElementById('trust-score').textContent = trustScore;
+            document.getElementById('readiness').textContent = readiness;
         }
 
         // Initialize everything
@@ -677,7 +647,6 @@
             updateSlider('safety-slider', 'safety-value');
             updateSlider('compassion-slider', 'compassion-value');
             updateSlider('benefit-slider', 'benefit-value');
-            updateSlider('transformation-slider', 'transformation-value');
 
             // Initial assessment
             updateOverallAssessment();
