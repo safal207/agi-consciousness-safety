@@ -141,6 +141,16 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
         .value-display {
             font-size: 1.5em;
             font-weight: bold;
@@ -575,14 +585,14 @@
 
         const statusContent = {
             en: {
-                risk: { low: 'LOW', medium: 'MEDIUM', high: 'HIGH' },
-                trust: { high: 'HIGH', medium: 'MEDIUM', low: 'LOW' },
-                readiness: { ready: 'READY', caution: 'CAUTION', review: 'REVIEW' }
+                risk_low: 'LOW', risk_medium: 'MEDIUM', risk_high: 'HIGH',
+                trust_high: 'HIGH', trust_medium: 'MEDIUM', trust_low: 'LOW',
+                readiness_ready: 'READY', readiness_caution: 'CAUTION', readiness_review: 'REVIEW'
             },
             ru: {
-                risk: { low: 'НИЗКИЙ', medium: 'СРЕДНИЙ', high: 'ВЫСОКИЙ' },
-                trust: { high: 'ВЫСОКИЙ', medium: 'СРЕДНИЙ', low: 'НИЗКИЙ' },
-                readiness: { ready: 'ГОТОВ', caution: 'ВНИМАНИЕ', review: 'ПРОВЕРКА' }
+                risk_low: 'НИЗКИЙ', risk_medium: 'СРЕДНИЙ', risk_high: 'ВЫСОКИЙ',
+                trust_high: 'ВЫСОКИЙ', trust_medium: 'СРЕДНИЙ', trust_low: 'НИЗКИЙ',
+                readiness_ready: 'ГОТОВ', readiness_caution: 'ВНИМАНИЕ', readiness_review: 'ПРОВЕРКА'
             }
         };
 
@@ -597,9 +607,9 @@
         function renderAssessment() {
             document.getElementById('overall-score').textContent = lastAssessment.overallScore.toFixed(2);
             document.getElementById('transformation-count').textContent = lastAssessment.peopleHelped;
-            document.getElementById('risk-level').textContent = statusContent[currentLanguage].risk[lastAssessment.riskKey];
-            document.getElementById('trust-score').textContent = statusContent[currentLanguage].trust[lastAssessment.trustKey];
-            document.getElementById('readiness').textContent = statusContent[currentLanguage].readiness[lastAssessment.readinessKey];
+            document.getElementById('risk-level').textContent = statusContent[currentLanguage]['risk_' + lastAssessment.riskKey];
+            document.getElementById('trust-score').textContent = statusContent[currentLanguage]['trust_' + lastAssessment.trustKey];
+            document.getElementById('readiness').textContent = statusContent[currentLanguage]['readiness_' + lastAssessment.readinessKey];
         }
 
         // Language switching function
@@ -612,12 +622,14 @@
             });
 
             // Update all text content
-            Object.keys(content[lang]).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) {
-                    element.textContent = content[lang][key];
+            for (const key in content[lang]) {
+                if (Object.hasOwnProperty.call(content[lang], key)) {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.textContent = content[lang][key];
+                    }
                 }
-            });
+            }
 
             // Re-render assessment values in the selected language
             renderAssessment();
