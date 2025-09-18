@@ -1,0 +1,62 @@
+name: Claude Review
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get short diff
+        run: |
+          # Берём только первые 200 строк для теста
+          gh pr diff ${{ github.event.issue.number }} | head -n 200 > diff.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build JSON request via jq
+        run: |
+          # Формируем JSON целиком через jq, чтобы избежать ошибок экранирования
+          jq -n \
+            --arg model "claude-3-haiku-20240307" \
+            --arg diff "$(cat diff.txt)" \
+            '{
+              model: $model,
+              max_tokens: 500,
+              messages: [
+                {
+                  role: "user",
+                  content: "Проанализируй этот PR и предложи улучшения:\n\($diff)"
+                }
+              ]
+            }' > request.json
+
+      - name: Call Claude API
+        run: |
+          curl -s https://api.anthropic.com/v1/messages \
+            -H "x-api-key: ${{ secrets.CLAUDE_API_KEY }}" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d @request.json | tee api_response.json
+
+          RESPONSE=$(jq -r '
+            if .content and .content[0] and .content[0].text then
+              .content[0].text
+            elif .error and .error.message then
+              "❌ Claude API error: " + .error.message
+            else
+              "❌ Claude не вернул ответа"
+            end
+          ' api_response.json)
+
+          echo "$RESPONSE" > response.txt
+          gh pr comment ${{ github.event.issue.number }} --body-file response.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
