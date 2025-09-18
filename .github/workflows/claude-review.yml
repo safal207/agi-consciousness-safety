@@ -9,52 +9,119 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write   # даёт право комментировать PR
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get PR diff (limited)
+      - name: Gather PR context
+        id: pr
         run: |
-          # Берём только первые 2000 строк diff, чтобы не перегружать API
-          gh pr diff ${{ github.event.issue.number }} | head -n 2000 > diff.txt
+          echo "PR_NUMBER=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          echo "REPO=${{ github.repository }}" >> $GITHUB_OUTPUT
+          echo "OWNER=${GITHUB_REPOSITORY%%/*}" >> $GITHUB_OUTPUT
+          echo "NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_OUTPUT
+
+      - name: Get PR meta and files
+        run: |
+          # Метаданные PR
+          gh pr view ${{ steps.pr.outputs.PR_NUMBER }} --json title,body,number,author > pr_meta.json
+
+          # Список изменённых файлов (до 300 файлов)
+          gh api repos/${{ steps.pr.outputs.OWNER }}/${{ steps.pr.outputs.NAME }}/pulls/${{ steps.pr.outputs.PR_NUMBER }}/files \
+            --paginate > pr_files.json
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get PR diff (limited)
+        run: |
+          # Базовый diff
+          gh pr diff ${{ steps.pr.outputs.PR_NUMBER }} > full_diff.txt
+
+          # Обрезка: сначала по строкам, затем по байтам (200k)
+          head -n 2000 full_diff.txt > diff_limited_lines.txt
+          head -c 200000 diff_limited_lines.txt > diff.txt
+
+          echo "DIFF_LINES=$(wc -l < full_diff.txt)" >> $GITHUB_ENV
+          echo "DIFF_BYTES=$(wc -c < full_diff.txt)" >> $GITHUB_ENV
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build prompt
+        run: |
+          # Экранируем все части в валидный JSON-текст
+          TITLE=$(jq -r '.title // ""' pr_meta.json)
+          BODY=$(jq -r '.body // ""' pr_meta.json)
+          FILES=$(jq -r '.[].filename' pr_files.json | sed 's/^/- /' || true)
+
+          # Текстовая шапка
+          {
+            echo "PR Title: ${TITLE}"
+            echo
+            echo "PR Description:"
+            echo "${BODY}"
+            echo
+            echo "Changed files:"
+            echo "${FILES}"
+            echo
+            if [ "${DIFF_BYTES}" -gt 200000 ] || [ "$(wc -l < full_diff.txt)" -gt 2000 ]; then
+              echo "(Diff truncated for model input; showing limited excerpt below)"
+              echo
+            fi
+            echo "Diff excerpt:"
+            cat diff.txt
+          } > prompt.txt
+
+          # Экранируем в JSON-строку для Anthropic
+          jq -Rs . < prompt.txt > prompt.json
+
       - name: Prepare request for Claude
         run: |
-          # Экранируем diff в JSON-строку
-          jq -Rs . < diff.txt > diff.json
-
-          # Формируем JSON-запрос с плейсхолдером
           cat > request.json <<'EOF'
           {
             "model": "claude-3-sonnet-20240229",
-            "max_tokens": 1000,
+            "max_tokens": 1200,
             "messages": [
               {
                 "role": "user",
-                "content": "Проанализируй этот PR и предложи улучшения:\nDIFF_PLACEHOLDER"
+                "content": [
+                  {"type": "text", "text": "You are a senior code reviewer. Provide concise, actionable feedback."},
+                  {"type": "text", "text": "Focus on: correctness, edge cases, readability, accessibility/i18n, and performance. Use bullet points."},
+                  {"type": "text", "text": "Here is the PR context and a limited diff excerpt:"},
+                  {"type": "text", "text": PROMPT_PLACEHOLDER}
+                ]
               }
             ]
           }
           EOF
 
-          # Подставляем diff, читая его прямо из файла
-          awk 'NR==FNR {diff=$0; next} {gsub(/DIFF_PLACEHOLDER/, diff)}1' diff.json request.json > request_filled.json
+          # Подставляем экранированный prompt без передачи его в аргументах команд
+          awk 'NR==FNR {p=$0; next} {gsub(/PROMPT_PLACEHOLDER/, p)}1' prompt.json request.json > request_filled.json
           mv request_filled.json request.json
 
       - name: Call Claude API
         run: |
-          # Отправляем запрос и логируем полный ответ
+          # Важный заголовок anthropic-version обязателен для API
           curl -s https://api.anthropic.com/v1/messages \
             -H "x-api-key: ${{ secrets.CLAUDE_API_KEY }}" \
+            -H "anthropic-version: 2023-06-01" \
             -H "content-type: application/json" \
             -d @request.json | tee api_response.json
 
-          RESPONSE=$(jq -r '.content[0].text // "❌ Claude не вернул ответа"' api_response.json)
+          # Пытаемся достать текст ответа; если его нет — достаём сообщение об ошибке
+          RESPONSE=$(jq -r '
+            if .content and .content[0] and .content[0].text then
+              .content[0].text
+            elif .error and .error.message then
+              "❌ Claude API error: " + .error.message
+            else
+              "❌ Claude не вернул ответа (проверь размер diff, формат запроса или лимиты API)."
+            end
+          ' api_response.json)
 
           echo "$RESPONSE" > response.txt
-          gh pr comment ${{ github.event.issue.number }} --body-file response.txt
+          gh pr comment ${{ steps.pr.outputs.PR_NUMBER }} --body-file response.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
