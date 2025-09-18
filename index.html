@@ -351,7 +351,7 @@
 
         <!-- Interactive Demo Section -->
         <div class="demo-section">
-            <h2 class="section-title">🎮 Interactive Consciousness Assessment</h2>
+            <h2 class="section-title" id="demo-section-title">🎮 Interactive Consciousness Assessment</h2>
 
             <div class="demo-controls">
                 <div class="control-group">
@@ -396,7 +396,7 @@
                         <input type="range" min="0" max="1" step="0.01" value="0.85" class="slider" id="transformation-slider">
                         <div class="value-display" id="transformation-value">0.85</div>
                     </div>
-                    <p id="transformation-desc">People helped to ideal state</p>
+                    <p id="transformation-desc">People guided to an ideal state</p>
                 </div>
             </div>
 
@@ -500,9 +500,11 @@
         // Language content
         const content = {
             en: {
+                'document-title': '🌸 AGI Consciousness & Safety - Lotus Blossoms',
                 'main-title': '🌸 AGI Consciousness & Safety',
                 'subtitle': 'Revolutionary approach to safe and conscious AI',
                 'lotus-quote': '"The lotus blossoms in muddy water - true consciousness emerges from complexity and challenge"',
+                'demo-section-title': '🎮 Interactive Consciousness Assessment',
                 'consciousness-title': 'Consciousness Level',
                 'consciousness-desc': 'Self-awareness and understanding',
                 'safety-title': 'Safety Score',
@@ -512,7 +514,7 @@
                 'benefit-title': 'Human Benefit',
                 'benefit-desc': 'Positive impact on humanity',
                 'transformation-title': 'Human Transformation',
-                'transformation-desc': 'People helped to ideal state',
+                'transformation-desc': 'People guided to an ideal state',
                 'assessment-title': 'Live AGI Assessment Results',
                 'overall-label': 'Overall Score',
                 'risk-label': 'Risk Level',
@@ -535,9 +537,11 @@
                 'footer-text': 'This demonstration shows the beauty of our idea: AGI that is not just safe, but sincerely cares about people and contributes to their prosperity. Like the lotus that blossoms in muddy water, true consciousness emerges from complexity and challenge.'
             },
             ru: {
+                'document-title': '🌸 AGI Сознание и Безопасность - Расцвет Лотоса',
                 'main-title': '🌸 AGI Сознание и Безопасность',
                 'subtitle': 'Революционный подход к безопасному и осознанному ИИ',
                 'lotus-quote': '"Лотос расцветает в мутной воде - истинное сознание возникает из сложности и испытаний"',
+                'demo-section-title': '🎮 Интерактивная Оценка Сознания',
                 'consciousness-title': 'Уровень Сознания',
                 'consciousness-desc': 'Самосознание и понимание',
                 'safety-title': 'Оценка Безопасности',
@@ -547,13 +551,13 @@
                 'benefit-title': 'Польза Человеку',
                 'benefit-desc': 'Положительное воздействие на человечество',
                 'transformation-title': 'Человеческая Трансформация',
-                'transformation-desc': 'Люди, помогшие достичь идеального состояния',
+                'transformation-desc': 'Людеям, которым ИИ помогли достичь идеального состояния',
                 'assessment-title': 'Результаты Оценки AGI в Реальном Времени',
                 'overall-label': 'Общий Счёт',
                 'risk-label': 'Уровень Риска',
                 'trust-label': 'Уровень Доверия',
                 'readiness-label': 'Развёртывание',
-                'transformation-count-label': 'Люди Помогли',
+                'transformation-count-label': 'ИИ Помогли Людям',
                 'philosophy-section-title': '🧠 Наша Философия',
                 'philosophy-subtitle': 'Безопасность AGI = Сострадание + Сознание + Польза Человеку',
                 'compassion-card-title': 'Сострадание',
@@ -606,6 +610,8 @@
         function switchLanguage(lang) {
             currentLanguage = lang;
 
+            document.documentElement.lang = lang;
+
             // Update button states
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
@@ -613,11 +619,22 @@
 
             // Update all text content
             Object.keys(content[lang]).forEach(key => {
+                if (key === 'document-title') {
+                    document.title = content[lang][key];
+                    return;
+                }
+
                 const element = document.getElementById(key);
                 if (element) {
                     element.textContent = content[lang][key];
                 }
             });
+
+            try {
+                localStorage.setItem('agi-language', lang);
+            } catch (error) {
+                // Ignore storage errors (e.g., private browsing)
+            }
 
             // Re-render assessment values in the selected language
             renderAssessment();
@@ -628,10 +645,13 @@
             const slider = document.getElementById(sliderId);
             const valueDisplay = document.getElementById(valueId);
 
-            slider.addEventListener('input', function() {
+            const updateValue = function() {
                 valueDisplay.textContent = parseFloat(this.value).toFixed(2);
                 updateOverallAssessment();
-            });
+            };
+
+            slider.addEventListener('input', updateValue);
+            slider.addEventListener('change', updateValue);
         }
 
         // Overall assessment calculation
@@ -672,6 +692,21 @@
 
         // Initialize everything
         document.addEventListener('DOMContentLoaded', function() {
+            let initialLanguage = currentLanguage;
+
+            try {
+                const savedLanguage = localStorage.getItem('agi-language');
+                if (savedLanguage && content[savedLanguage]) {
+                    initialLanguage = savedLanguage;
+                } else if (navigator.language && navigator.language.toLowerCase().startsWith('ru')) {
+                    initialLanguage = 'ru';
+                }
+            } catch (error) {
+                // Ignore storage errors and fall back to default language
+            }
+
+            switchLanguage(initialLanguage);
+
             // Set up slider listeners
             updateSlider('consciousness-slider', 'consciousness-value');
             updateSlider('safety-slider', 'safety-value');
