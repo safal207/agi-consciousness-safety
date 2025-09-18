@@ -38,9 +38,9 @@ jobs:
           }
           EOF
 
-          # Подставляем экранированный diff в JSON-запрос
-          DIFF_ESCAPED=$(cat diff.json)
-          sed -i "s|DIFF_PLACEHOLDER|$DIFF_ESCAPED|" request.json
+          # Подставляем diff без передачи его в аргументах (чтобы избежать Argument list too long)
+          awk -v diff="$(< diff.json)" '{gsub(/DIFF_PLACEHOLDER/, diff)}1' request.json > request_filled.json
+          mv request_filled.json request.json
 
       - name: Call Claude API
         run: |
