@@ -169,6 +169,37 @@ test('slider interactions clamp values, update styles, and recalculate assessmen
     );
 });
 
+test('true state approaches toggle panels and aria metadata', () => {
+    const doc = createMockDocument();
+    initializeApp(doc);
+    changeLanguage(doc, 'en');
+
+    const aiButton = doc.getElementById('true-state-ai-button');
+    const communityButton = doc.getElementById('true-state-community-button');
+    const lifelineButton = doc.getElementById('true-state-lifeline-button');
+    const aiPanel = doc.getElementById('true-state-panel-ai');
+    const communityPanel = doc.getElementById('true-state-panel-community');
+    const lifelinePanel = doc.getElementById('true-state-panel-lifeline');
+
+    assert.equal(aiButton.getAttribute('aria-expanded'), 'true');
+    assert.equal(aiPanel.getAttribute('aria-hidden'), 'false');
+    assert.equal(aiPanel.hasAttribute('hidden'), false);
+
+    fireEvent(communityButton, 'click', { target: communityButton });
+    assert.equal(communityButton.getAttribute('aria-expanded'), 'true');
+    assert.equal(communityPanel.getAttribute('aria-hidden'), 'false');
+    assert.equal(communityPanel.hasAttribute('hidden'), false);
+    assert.equal(aiButton.getAttribute('aria-expanded'), 'false');
+    assert.equal(aiPanel.getAttribute('aria-hidden'), 'true');
+    assert.equal(aiPanel.hasAttribute('hidden'), true);
+
+    const lifelineKeyEvent = fireEvent(lifelineButton, 'keydown', { key: ' ', target: lifelineButton });
+    assert.equal(lifelineKeyEvent.defaultPrevented, true);
+    assert.equal(lifelineButton.getAttribute('aria-expanded'), 'true');
+    assert.equal(lifelinePanel.getAttribute('aria-hidden'), 'false');
+    assert.equal(lifelinePanel.hasAttribute('hidden'), false);
+});
+
 test('findMissingTranslationKeys reports no gaps for supported languages', () => {
     const doc = createMockDocument();
     initializeApp(doc);

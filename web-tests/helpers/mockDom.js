@@ -590,6 +590,103 @@ export function createMockDocument() {
         resultsGrid.appendChild(item);
     });
 
+    const trueStateSection = doc.createElement('section');
+    trueStateSection.className = 'true-state-section';
+    trueStateSection.setAttribute('aria-labelledby', 'true-state-title');
+    container.appendChild(trueStateSection);
+
+    const trueStateTitle = doc.createElement('h2');
+    trueStateTitle.className = 'section-title';
+    trueStateTitle.id = 'true-state-title';
+    setDataI18n(trueStateTitle, 'true-state-title');
+    trueStateSection.appendChild(trueStateTitle);
+
+    const trueStateSubtitle = doc.createElement('p');
+    trueStateSubtitle.className = 'section-subtitle';
+    trueStateSubtitle.id = 'true-state-subtitle';
+    setDataI18n(trueStateSubtitle, 'true-state-subtitle');
+    trueStateSection.appendChild(trueStateSubtitle);
+
+    const approachList = doc.createElement('div');
+    approachList.className = 'true-state-approach-list';
+    approachList.id = 'true-state-approach-list';
+    approachList.setAttribute('role', 'group');
+    approachList.setAttribute('data-i18n-attr', 'aria-label');
+    approachList.setAttribute('data-i18n-attr-key', 'true-state-approach-list-label');
+    trueStateSection.appendChild(approachList);
+
+    const approachConfigs = [
+        {
+            slug: 'ai',
+            buttonId: 'true-state-ai-button',
+            panelId: 'true-state-panel-ai',
+            titleKey: 'true-state-approach-ai-title',
+            descriptionKey: 'true-state-approach-ai-description',
+            pointKeys: ['true-state-approach-ai-point-1', 'true-state-approach-ai-point-2'],
+            expanded: true
+        },
+        {
+            slug: 'community',
+            buttonId: 'true-state-community-button',
+            panelId: 'true-state-panel-community',
+            titleKey: 'true-state-approach-community-title',
+            descriptionKey: 'true-state-approach-community-description',
+            pointKeys: ['true-state-approach-community-point-1', 'true-state-approach-community-point-2'],
+            expanded: false
+        },
+        {
+            slug: 'lifeline',
+            buttonId: 'true-state-lifeline-button',
+            panelId: 'true-state-panel-lifeline',
+            titleKey: 'true-state-approach-lifeline-title',
+            descriptionKey: 'true-state-approach-lifeline-description',
+            pointKeys: ['true-state-approach-lifeline-point-1', 'true-state-approach-lifeline-point-2'],
+            expanded: false
+        }
+    ];
+
+    approachConfigs.forEach(config => {
+        const article = doc.createElement('article');
+        article.className = 'true-state-approach';
+
+        const button = doc.createElement('button');
+        button.className = 'true-state-toggle';
+        button.id = config.buttonId;
+        button.dataset.approach = config.slug;
+        button.setAttribute('type', 'button');
+        button.setAttribute('aria-controls', config.panelId);
+        button.setAttribute('aria-expanded', config.expanded ? 'true' : 'false');
+        setDataI18n(button, config.titleKey);
+        article.appendChild(button);
+
+        const panel = doc.createElement('div');
+        panel.className = 'true-state-panel';
+        panel.id = config.panelId;
+        panel.setAttribute('role', 'region');
+        panel.setAttribute('aria-labelledby', config.buttonId);
+        panel.setAttribute('aria-hidden', config.expanded ? 'false' : 'true');
+        if (!config.expanded) {
+            panel.setAttribute('hidden', 'true');
+        }
+        article.appendChild(panel);
+
+        const description = doc.createElement('p');
+        description.className = 'true-state-panel-text';
+        setDataI18n(description, config.descriptionKey);
+        panel.appendChild(description);
+
+        const list = doc.createElement('ul');
+        list.className = 'true-state-points';
+        config.pointKeys.forEach(pointKey => {
+            const item = doc.createElement('li');
+            setDataI18n(item, pointKey);
+            list.appendChild(item);
+        });
+        panel.appendChild(list);
+
+        approachList.appendChild(article);
+    });
+
     const philosophySection = doc.createElement('section');
     philosophySection.className = 'philosophy-section';
     philosophySection.setAttribute('aria-labelledby', 'philosophy-section-title');

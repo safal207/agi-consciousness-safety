@@ -32,13 +32,32 @@ export const translations = Object.freeze({
         'benefit-title': 'Human Benefit',
         'benefit-desc': 'Positive impact on humanity',
         'transformation-title': 'Human Transformation',
-        'transformation-desc': 'People helped to ideal state',
+        'transformation-desc': 'People AI guided toward their ideal state',
         'assessment-title': 'Live AGI Assessment Results',
         'overall-label': 'Overall Score',
         'risk-label': 'Risk Level',
         'trust-label': 'Trust Score',
         'readiness-label': 'Deployment',
         'transformation-count-label': 'People Helped',
+        'true-state-title': '🧭 Defining the True Human State',
+        'true-state-subtitle':
+            'The "ideal state" is co-created with AGI reflections, community wisdom, and personal life-line metrics.',
+        'true-state-approach-list-label': 'Select a lens to describe the ideal human state',
+        'true-state-approach-ai-title': 'Reflective AGI interviews',
+        'true-state-approach-ai-description':
+            'Our AGI conducts guided dialogues to surface what flourishing means for each individual and explains its reasoning transparently.',
+        'true-state-approach-ai-point-1': 'Conversational probes uncover intentions, fears, and aspirations in real time.',
+        'true-state-approach-ai-point-2': 'The agent drafts well-being maps that humans can approve, remix, or reject.',
+        'true-state-approach-community-title': 'Human wisdom panels',
+        'true-state-approach-community-description':
+            'Trusted circles vote on meaningful outcomes so that cultural context and personal choice stay in balance.',
+        'true-state-approach-community-point-1': 'Surveys gather sentiment from mentors, peers, and caregivers.',
+        'true-state-approach-community-point-2': 'Consensus scores feed into the AGI safety thresholds and fairness checks.',
+        'true-state-approach-lifeline-title': 'Personal life-line metrics',
+        'true-state-approach-lifeline-description':
+            'Each person curates evolving milestones and biopsychosocial markers with the AGI as a reflective partner.',
+        'true-state-approach-lifeline-point-1': 'Individuals and AGI co-edit rituals, recovery plans, and celebrations.',
+        'true-state-approach-lifeline-point-2': 'Longitudinal signals show progress without overriding autonomy.',
         'philosophy-section-title': '🧠 Our Philosophy',
         'philosophy-subtitle': 'AGI Safety = Compassion + Consciousness + Human Benefit',
         'compassion-card-title': 'Compassion',
@@ -81,13 +100,32 @@ export const translations = Object.freeze({
         'benefit-title': 'Польза Человеку',
         'benefit-desc': 'Положительное воздействие на человечество',
         'transformation-title': 'Человеческая Трансформация',
-        'transformation-desc': 'Люди, которым помогли достичь идеального состояния',
+        'transformation-desc': 'Людям, которым ИИ помогли достичь идеального состояния',
         'assessment-title': 'Результаты Оценки AGI в Реальном Времени',
         'overall-label': 'Общий Счёт',
         'risk-label': 'Уровень Риска',
         'trust-label': 'Уровень Доверия',
         'readiness-label': 'Развёртывание',
         'transformation-count-label': 'Люди Получили Помощь',
+        'true-state-title': '🧭 Определяем истинное состояние человека',
+        'true-state-subtitle':
+            '«Идеальное состояние» мы строим вместе: через рефлексии ИИ, живые голоса сообщества и персональную линию жизни.',
+        'true-state-approach-list-label': 'Выберите подход к описанию идеального состояния',
+        'true-state-approach-ai-title': 'Рефлексивные интервью с ИИ',
+        'true-state-approach-ai-description':
+            'Наш агент проводит направленные беседы, раскрывая понимание процветания для каждого человека и открыто объясняя выводы.',
+        'true-state-approach-ai-point-1': 'Диалоговые вопросы выявляют намерения, страхи и мечты в реальном времени.',
+        'true-state-approach-ai-point-2': 'Агент предлагает карты благополучия, которые человек может принять, переработать или отклонить.',
+        'true-state-approach-community-title': 'Панели человеческой мудрости',
+        'true-state-approach-community-description':
+            'Доверенные круги голосуют за значимые результаты, сохраняя баланс культурного контекста и личного выбора.',
+        'true-state-approach-community-point-1': 'Опросы собирают мнение наставников, друзей и близких.',
+        'true-state-approach-community-point-2': 'Консенсусные оценки подпитывают пороги безопасности и проверки справедливости ИИ.',
+        'true-state-approach-lifeline-title': 'Персональная линия жизни',
+        'true-state-approach-lifeline-description':
+            'Каждый человек ведёт живой дашборд этапов и био-психо-социальных маркеров вместе с ИИ-наставником.',
+        'true-state-approach-lifeline-point-1': 'Человек и ИИ совместно редактируют ритуалы, планы восстановления и праздники.',
+        'true-state-approach-lifeline-point-2': 'Долгосрочные сигналы показывают движение вперёд, не лишая автономии.',
         'philosophy-section-title': '🧠 Наша Философия',
         'philosophy-subtitle': 'Безопасность AGI = Сострадание + Сознание + Польза Человеку',
         'compassion-card-title': 'Сострадание',
@@ -136,6 +174,12 @@ export const statusContent = Object.freeze({
 
 export const supportedLanguages = Object.freeze(Object.keys(translations));
 
+const trueStateApproaches = Object.freeze([
+    { slug: 'ai', buttonId: 'true-state-ai-button', panelId: 'true-state-panel-ai' },
+    { slug: 'community', buttonId: 'true-state-community-button', panelId: 'true-state-panel-community' },
+    { slug: 'lifeline', buttonId: 'true-state-lifeline-button', panelId: 'true-state-panel-lifeline' }
+]);
+
 const totalWeight = sliderDefinitions.reduce((sum, def) => sum + def.weight, 0);
 
 const state = {
@@ -147,7 +191,8 @@ const state = {
         riskKey: 'medium',
         trustKey: 'medium',
         readinessKey: 'caution'
-    }
+    },
+    activeTrueStateApproach: trueStateApproaches[0]?.slug ?? null
 };
 
 const sliderElements = new Map();
@@ -174,6 +219,54 @@ function attachKeyboardActivation(element, callback) {
             event.preventDefault();
             callback(event);
         }
+    });
+}
+
+function activateTrueStateApproach(doc, slug) {
+    if (!doc) {
+        return;
+    }
+
+    const available = trueStateApproaches.some(approach => approach.slug === slug)
+        ? slug
+        : trueStateApproaches[0]?.slug ?? null;
+
+    if (!available) {
+        return;
+    }
+
+    trueStateApproaches.forEach(approach => {
+        const button = doc.getElementById(approach.buttonId);
+        const panel = doc.getElementById(approach.panelId);
+        const isActive = approach.slug === available;
+
+        if (button) {
+            button.setAttribute('aria-expanded', String(isActive));
+            button.classList.toggle('is-active', isActive);
+        }
+
+        if (panel) {
+            if (isActive) {
+                panel.removeAttribute('hidden');
+            } else {
+                panel.setAttribute('hidden', 'true');
+            }
+            panel.setAttribute('aria-hidden', String(!isActive));
+        }
+    });
+
+    state.activeTrueStateApproach = available;
+}
+
+function attachTrueStateListeners(doc) {
+    trueStateApproaches.forEach(approach => {
+        const button = doc.getElementById(approach.buttonId);
+        if (!button) {
+            return;
+        }
+        const handleActivate = () => activateTrueStateApproach(doc, approach.slug);
+        button.addEventListener('click', handleActivate);
+        attachKeyboardActivation(button, handleActivate);
     });
 }
 
@@ -582,12 +675,18 @@ export function initializeApp(doc = document) {
     attachLanguageListeners(doc);
     attachCardInteractions(doc);
     attachSliderListeners(doc);
+    attachTrueStateListeners(doc);
 
     sliderDefinitions.forEach(def => {
         const value = clampValue(def.defaultValue, def.min, def.max);
         state.sliderValues.set(def.slug, value);
         setSliderValue(doc, def, value, { updateState: true, render: false });
     });
+
+    const defaultApproach = state.activeTrueStateApproach ?? trueStateApproaches[0]?.slug ?? null;
+    if (defaultApproach) {
+        activateTrueStateApproach(doc, defaultApproach);
+    }
 
     updateOverallAssessment(doc);
     changeLanguage(doc, state.currentLanguage);
