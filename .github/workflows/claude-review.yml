@@ -7,6 +7,9 @@ jobs:
   review:
     if: contains(github.event.comment.body, '@claude')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write   # даёт право комментировать PR
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,16 +21,21 @@ jobs:
 
       - name: Call Claude API
         run: |
-          RESPONSE=$(curl https://api.anthropic.com/v1/messages \
+          # Читаем diff и экранируем в JSON-строку
+          DIFF_CONTENT=$(jq -Rs . < diff.txt)
+
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
             -H "x-api-key: ${{ secrets.CLAUDE_API_KEY }}" \
             -H "content-type: application/json" \
             -d "{
               \"model\": \"claude-3-opus-20240229\",
               \"max_tokens\": 1000,
               \"messages\": [
-                {\"role\": \"user\", \"content\": \"Проанализируй этот PR и предложи улучшения:\n$(cat diff.txt)\"}
+                {\"role\": \"user\", \"content\": \"Проанализируй этот PR и предложи улучшения:\n${DIFF_CONTENT}\"}
               ]
-            }" | jq -r '.content[0].text')
-          gh pr comment ${{ github.event.issue.number }} --body "$RESPONSE"
+            }" | jq -r '.content[0].text // "❌ Claude не вернул ответа"')
+
+          echo "$RESPONSE" > response.txt
+          gh pr comment ${{ github.event.issue.number }} --body-file response.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
