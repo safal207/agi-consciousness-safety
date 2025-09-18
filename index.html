@@ -3,731 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌸 AGI Consciousness & Safety - Lotus Blossoms</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Language Toggle */
-        .language-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
-            padding: 5px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .lang-btn {
-            padding: 8px 16px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .lang-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 60px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .main-title {
-            font-size: 4em;
-            color: #fff;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .subtitle {
-            font-size: 1.5em;
-            color: #e8f4f8;
-            font-style: italic;
-            margin-bottom: 30px;
-        }
-
-        .lotus-quote {
-            font-size: 1.2em;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 15px;
-            display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        /* Interactive Demo Section */
-        .demo-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .demo-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .control-group {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border: 2px solid #e1e8ed;
-        }
-
-        .control-group h3 {
-            color: #2E8B57;
-            margin-bottom: 15px;
-        }
-
-        .slider-container {
-            margin: 15px 0;
-        }
-
-        .slider {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #ddd;
-            outline: none;
-            appearance: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        .value-display {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2E8B57;
-            margin-top: 10px;
-        }
-
-        /* Live Results */
-        .results-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .result-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .result-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #FFD700;
-        }
-
-        .result-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-
-        /* Philosophy Section */
-        .philosophy-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .section-title {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            text-align: center;
-            font-size: 2.5em;
-            color: #2E8B57;
-            margin-bottom: 30px;
-        }
-
-        .section-title::after {
-            content: '🌸';
-            position: static;
-        }
-
-        .philosophy-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .philosophy-card {
-            background: linear-gradient(135deg, #E6E6FA 0%, #F0FFF0 100%);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            border: 2px solid #DDA0DD;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .philosophy-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #45B7D1);
-        }
-
-        .philosophy-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
-
-        .philosophy-icon {
-            font-size: 3em;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .philosophy-title {
-            font-size: 1.5em;
-            color: #2E8B57;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .philosophy-description {
-            color: #666;
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
-        /* Vision Section */
-        .vision-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .vision-title {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-
-        .vision-text {
-            font-size: 1.2em;
-            line-height: 1.8;
-            margin-bottom: 30px;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 20px;
-        }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .footer-title {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #FFD700;
-        }
-
-        .footer-text {
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 2.5em;
-            }
-
-            .philosophy-grid,
-            .demo-controls,
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-title {
-                font-size: 2em;
-            }
-        }
-    </style>
+    <title data-i18n="page-title"></title>
+    <link rel="preload" href="assets/css/styles.min.css" as="style">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
 </head>
 <body>
-    <!-- Language Toggle -->
-    <div class="language-toggle">
-        <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">EN</button>
-        <button class="lang-btn" data-lang="ru" onclick="switchLanguage('ru')">RU</button>
+    <div class="language-toggle" role="group" data-i18n-attr="aria-label" data-i18n-attr-key="language-toggle-label">
+        <button
+            type="button"
+            class="lang-btn"
+            data-lang="en"
+            aria-pressed="true"
+            data-i18n="language-button-english"
+            data-i18n-attr="aria-label"
+            data-i18n-attr-key="language-button-english-aria"
+        ></button>
+        <button
+            type="button"
+            class="lang-btn"
+            data-lang="ru"
+            aria-pressed="false"
+            data-i18n="language-button-russian"
+            data-i18n-attr="aria-label"
+            data-i18n-attr-key="language-button-russian-aria"
+        ></button>
     </div>
 
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1 class="main-title" id="main-title">🌸 AGI Consciousness & Safety</h1>
-            <p class="subtitle" id="subtitle">Revolutionary approach to safe and conscious AI</p>
-            <div class="lotus-quote" id="lotus-quote">
-                "The lotus blossoms in muddy water - true consciousness emerges from complexity and challenge"
-            </div>
-        </div>
+        <header class="header">
+            <h1 class="main-title" id="main-title" data-i18n="main-title"></h1>
+            <p class="subtitle" id="subtitle" data-i18n="subtitle"></p>
+            <div class="lotus-quote" id="lotus-quote" data-i18n="lotus-quote"></div>
+        </header>
 
-        <!-- Interactive Demo Section -->
-        <div class="demo-section">
-            <h2 class="section-title" id="demo-section-title">🎮 Interactive Consciousness Assessment</h2>
+        <section class="demo-section" aria-labelledby="demo-title">
+            <h2 class="section-title" id="demo-title" data-i18n="demo-title"></h2>
+            <p class="section-subtitle" id="demo-subtitle" data-i18n="demo-subtitle"></p>
+            <div class="demo-controls" id="slider-controls"></div>
 
-            <div class="demo-controls">
-                <div class="control-group">
-                    <h3 id="consciousness-title">Consciousness Level</h3>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="1" step="0.01" value="0.75" class="slider" id="consciousness-slider">
-                        <div class="value-display" id="consciousness-value">0.75</div>
-                    </div>
-                    <p id="consciousness-desc">Self-awareness and understanding</p>
-                </div>
+            <section class="results-display" aria-live="polite" aria-atomic="true">
+                <h3 class="results-heading" id="assessment-title" data-i18n="assessment-title"></h3>
 
-                <div class="control-group">
-                    <h3 id="safety-title">Safety Score</h3>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="1" step="0.01" value="0.85" class="slider" id="safety-slider">
-                        <div class="value-display" id="safety-value">0.85</div>
-                    </div>
-                    <p id="safety-desc">Technical and ethical safety</p>
-                </div>
-
-                <div class="control-group">
-                    <h3 id="compassion-title">Compassion Level</h3>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="1" step="0.01" value="0.80" class="slider" id="compassion-slider">
-                        <div class="value-display" id="compassion-value">0.80</div>
-                    </div>
-                    <p id="compassion-desc">Empathy and care for humans</p>
-                </div>
-
-                <div class="control-group">
-                    <h3 id="benefit-title">Human Benefit</h3>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="1" step="0.01" value="0.78" class="slider" id="benefit-slider">
-                        <div class="value-display" id="benefit-value">0.78</div>
-                    </div>
-                    <p id="benefit-desc">Positive impact on humanity</p>
-                </div>
-
-                <div class="control-group">
-                    <h3 id="transformation-title">Human Transformation</h3>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="1" step="0.01" value="0.85" class="slider" id="transformation-slider">
-                        <div class="value-display" id="transformation-value">0.85</div>
-                    </div>
-                    <p id="transformation-desc">People guided to an ideal state</p>
-                </div>
-            </div>
-
-            <!-- Live Results -->
-            <div class="results-display">
-                <h3 id="assessment-title">Live AGI Assessment Results</h3>
                 <div class="results-grid">
                     <div class="result-item">
-                        <div class="result-value" id="overall-score">0.80</div>
-                        <div class="result-label" id="overall-label">Overall Score</div>
+                        <div class="result-value" id="overall-score" aria-live="polite">0.00</div>
+                        <div class="result-label" id="overall-label" data-i18n="overall-label"></div>
                     </div>
                     <div class="result-item">
-                        <div class="result-value" id="risk-level">LOW</div>
-                        <div class="result-label" id="risk-label">Risk Level</div>
+                        <div class="result-value" id="risk-level" aria-live="polite">-</div>
+                        <div class="result-label" id="risk-label" data-i18n="risk-label"></div>
                     </div>
                     <div class="result-item">
-                        <div class="result-value" id="trust-score">HIGH</div>
-                        <div class="result-label" id="trust-label">Trust Score</div>
+                        <div class="result-value" id="trust-score" aria-live="polite">-</div>
+                        <div class="result-label" id="trust-label" data-i18n="trust-label"></div>
                     </div>
                     <div class="result-item">
-                        <div class="result-value" id="readiness">READY</div>
-                        <div class="result-label" id="readiness-label">Deployment</div>
+                        <div class="result-value" id="readiness" aria-live="polite">-</div>
+                        <div class="result-label" id="readiness-label" data-i18n="readiness-label"></div>
                     </div>
                     <div class="result-item">
-                        <div class="result-value" id="transformation-count">34</div>
-                        <div class="result-label" id="transformation-count-label">People Helped</div>
+                        <div class="result-value" id="transformation-count" aria-live="polite">0</div>
+                        <div class="result-label" id="transformation-count-label" data-i18n="transformation-count-label"></div>
                     </div>
                 </div>
+            </section>
+        </section>
+
+        <section class="true-state-section" aria-labelledby="true-state-title">
+            <h2 class="section-title" id="true-state-title" data-i18n="true-state-title"></h2>
+            <p class="section-subtitle" id="true-state-subtitle" data-i18n="true-state-subtitle"></p>
+            <div
+                class="true-state-approach-list"
+                id="true-state-approach-list"
+                role="group"
+                data-i18n-attr="aria-label"
+                data-i18n-attr-key="true-state-approach-list-label"
+            >
+                <article class="true-state-approach">
+                    <button
+                        type="button"
+                        class="true-state-toggle"
+                        id="true-state-ai-button"
+                        data-approach="ai"
+                        aria-controls="true-state-panel-ai"
+                        aria-expanded="true"
+                        data-i18n="true-state-approach-ai-title"
+                    ></button>
+                    <div
+                        class="true-state-panel"
+                        id="true-state-panel-ai"
+                        role="region"
+                        aria-labelledby="true-state-ai-button"
+                        aria-hidden="false"
+                    >
+                        <p class="true-state-panel-text" data-i18n="true-state-approach-ai-description"></p>
+                        <ul class="true-state-points">
+                            <li data-i18n="true-state-approach-ai-point-1"></li>
+                            <li data-i18n="true-state-approach-ai-point-2"></li>
+                        </ul>
+                    </div>
+                </article>
+                <article class="true-state-approach">
+                    <button
+                        type="button"
+                        class="true-state-toggle"
+                        id="true-state-community-button"
+                        data-approach="community"
+                        aria-controls="true-state-panel-community"
+                        aria-expanded="false"
+                        data-i18n="true-state-approach-community-title"
+                    ></button>
+                    <div
+                        class="true-state-panel"
+                        id="true-state-panel-community"
+                        role="region"
+                        aria-labelledby="true-state-community-button"
+                        aria-hidden="true"
+                        hidden
+                    >
+                        <p class="true-state-panel-text" data-i18n="true-state-approach-community-description"></p>
+                        <ul class="true-state-points">
+                            <li data-i18n="true-state-approach-community-point-1"></li>
+                            <li data-i18n="true-state-approach-community-point-2"></li>
+                        </ul>
+                    </div>
+                </article>
+                <article class="true-state-approach">
+                    <button
+                        type="button"
+                        class="true-state-toggle"
+                        id="true-state-lifeline-button"
+                        data-approach="lifeline"
+                        aria-controls="true-state-panel-lifeline"
+                        aria-expanded="false"
+                        data-i18n="true-state-approach-lifeline-title"
+                    ></button>
+                    <div
+                        class="true-state-panel"
+                        id="true-state-panel-lifeline"
+                        role="region"
+                        aria-labelledby="true-state-lifeline-button"
+                        aria-hidden="true"
+                        hidden
+                    >
+                        <p class="true-state-panel-text" data-i18n="true-state-approach-lifeline-description"></p>
+                        <ul class="true-state-points">
+                            <li data-i18n="true-state-approach-lifeline-point-1"></li>
+                            <li data-i18n="true-state-approach-lifeline-point-2"></li>
+                        </ul>
+                    </div>
+                </article>
             </div>
-        </div>
+        </section>
 
-        <!-- Philosophy Section -->
-        <div class="philosophy-section">
-            <h2 class="section-title" id="philosophy-section-title">🧠 Our Philosophy</h2>
-            <p id="philosophy-subtitle" style="text-align: center; font-size: 1.2em; color: #666; margin-bottom: 20px;">
-                AGI Safety = Compassion + Consciousness + Human Benefit
-            </p>
-
+        <section class="philosophy-section" aria-labelledby="philosophy-section-title">
+            <h2 class="section-title" id="philosophy-section-title" data-i18n="philosophy-section-title"></h2>
+            <p class="section-subtitle" id="philosophy-subtitle" data-i18n="philosophy-subtitle"></p>
             <div class="philosophy-grid">
-                <div class="philosophy-card">
-                    <span class="philosophy-icon">🧡</span>
-                    <h3 class="philosophy-title" id="compassion-card-title">Compassion</h3>
-                    <p class="philosophy-description" id="compassion-card-desc">
-                        AI systems should show empathy and care for human welfare,
-                        understanding emotional needs and responding with kindness.
-                    </p>
-                </div>
-
-                <div class="philosophy-card">
-                    <span class="philosophy-icon">🧠</span>
-                    <h3 class="philosophy-title" id="consciousness-card-title">Consciousness</h3>
-                    <p class="philosophy-description" id="consciousness-card-desc">
-                        Measuring and enhancing AI consciousness through self-awareness,
-                        emotional intelligence, and beneficial actions.
-                    </p>
-                </div>
-
-                <div class="philosophy-card">
-                    <span class="philosophy-icon">🌟</span>
-                    <h3 class="philosophy-title" id="benefit-card-title">Human Benefit</h3>
-                    <p class="philosophy-description" id="benefit-card-desc">
-                        Every AI action should demonstrably improve human lives,
-                        advance understanding, and contribute to flourishing.
-                    </p>
-                </div>
-
-                <div class="philosophy-card">
-                    <span class="philosophy-icon">🤝</span>
-                    <h3 class="philosophy-title" id="responsibility-card-title">Responsibility</h3>
-                    <p class="philosophy-description" id="responsibility-card-desc">
-                        Creating AI with deep understanding of action consequences,
-                        ethical priorities, and care for humanity's future.
-                    </p>
-                </div>
+                <article class="philosophy-card" id="compassion-card" tabindex="0" role="button" data-i18n-attr="aria-label" data-i18n-attr-key="compassion-card-aria-label">
+                    <span class="philosophy-icon" aria-hidden="true">💖</span>
+                    <h3 class="philosophy-title" id="compassion-card-title" data-i18n="compassion-card-title"></h3>
+                    <p class="philosophy-description" id="compassion-card-desc" data-i18n="compassion-card-desc"></p>
+                </article>
+                <article class="philosophy-card" id="consciousness-card" tabindex="0" role="button" data-i18n-attr="aria-label" data-i18n-attr-key="consciousness-card-aria-label">
+                    <span class="philosophy-icon" aria-hidden="true">🧠</span>
+                    <h3 class="philosophy-title" id="consciousness-card-title" data-i18n="consciousness-card-title"></h3>
+                    <p class="philosophy-description" id="consciousness-card-desc" data-i18n="consciousness-card-desc"></p>
+                </article>
+                <article class="philosophy-card" id="benefit-card" tabindex="0" role="button" data-i18n-attr="aria-label" data-i18n-attr-key="benefit-card-aria-label">
+                    <span class="philosophy-icon" aria-hidden="true">🌍</span>
+                    <h3 class="philosophy-title" id="benefit-card-title" data-i18n="benefit-card-title"></h3>
+                    <p class="philosophy-description" id="benefit-card-desc" data-i18n="benefit-card-desc"></p>
+                </article>
+                <article class="philosophy-card" id="responsibility-card" tabindex="0" role="button" data-i18n-attr="aria-label" data-i18n-attr-key="responsibility-card-aria-label">
+                    <span class="philosophy-icon" aria-hidden="true">🛡️</span>
+                    <h3 class="philosophy-title" id="responsibility-card-title" data-i18n="responsibility-card-title"></h3>
+                    <p class="philosophy-description" id="responsibility-card-desc" data-i18n="responsibility-card-desc"></p>
+                </article>
             </div>
-        </div>
+        </section>
 
-        <!-- Vision Section -->
-        <div class="vision-section">
-            <h2 class="vision-title" id="vision-title">🌟 Our Vision for the Future</h2>
-            <p class="vision-text" id="vision-text">
-                We are creating not just safe AI - we are creating AI that truly understands
-                the human experience, shows genuine compassion, and contributes to humanity's flourishing.
-            </p>
-        </div>
+        <section class="vision-section" aria-labelledby="vision-title">
+            <h2 class="vision-title" id="vision-title" data-i18n="vision-title"></h2>
+            <p class="vision-text" id="vision-text" data-i18n="vision-text"></p>
+        </section>
 
-        <!-- Footer -->
-        <div class="footer">
+        <footer class="footer">
             <div class="footer-content">
-                <h2 class="footer-title" id="footer-title">🌸 Lotus Blossoms</h2>
-                <p class="footer-text" id="footer-text">
-                    This demonstration shows the beauty of our idea: AGI that is not just safe,
-                    but sincerely cares about people and contributes to their prosperity.
-                    Like the lotus that blossoms in muddy water, true consciousness emerges from complexity and challenge.
-                </p>
+                <h2 class="footer-title" id="footer-title" data-i18n="footer-title"></h2>
+                <p class="footer-text" id="footer-text" data-i18n="footer-text"></p>
             </div>
-        </div>
+        </footer>
     </div>
 
-    <script>
-        // Language content
-        const content = {
-            en: {
-                'document-title': '🌸 AGI Consciousness & Safety - Lotus Blossoms',
-                'main-title': '🌸 AGI Consciousness & Safety',
-                'subtitle': 'Revolutionary approach to safe and conscious AI',
-                'lotus-quote': '"The lotus blossoms in muddy water - true consciousness emerges from complexity and challenge"',
-                'demo-section-title': '🎮 Interactive Consciousness Assessment',
-                'consciousness-title': 'Consciousness Level',
-                'consciousness-desc': 'Self-awareness and understanding',
-                'safety-title': 'Safety Score',
-                'safety-desc': 'Technical and ethical safety',
-                'compassion-title': 'Compassion Level',
-                'compassion-desc': 'Empathy and care for humans',
-                'benefit-title': 'Human Benefit',
-                'benefit-desc': 'Positive impact on humanity',
-                'transformation-title': 'Human Transformation',
-                'transformation-desc': 'People guided to an ideal state',
-                'assessment-title': 'Live AGI Assessment Results',
-                'overall-label': 'Overall Score',
-                'risk-label': 'Risk Level',
-                'trust-label': 'Trust Score',
-                'readiness-label': 'Deployment',
-                'transformation-count-label': 'People Helped',
-                'philosophy-section-title': '🧠 Our Philosophy',
-                'philosophy-subtitle': 'AGI Safety = Compassion + Consciousness + Human Benefit',
-                'compassion-card-title': 'Compassion',
-                'compassion-card-desc': 'AI systems should show empathy and care for human welfare, understanding emotional needs and responding with kindness.',
-                'consciousness-card-title': 'Consciousness',
-                'consciousness-card-desc': 'Measuring and enhancing AI consciousness through self-awareness, emotional intelligence, and beneficial actions.',
-                'benefit-card-title': 'Human Benefit',
-                'benefit-card-desc': 'Every AI action should demonstrably improve human lives, advance understanding, and contribute to flourishing.',
-                'responsibility-card-title': 'Responsibility',
-                'responsibility-card-desc': 'Creating AI with deep understanding of action consequences, ethical priorities, and care for humanity\'s future.',
-                'vision-title': '🌟 Our Vision for the Future',
-                'vision-text': 'We are creating not just safe AI - we are creating AI that truly understands the human experience, shows genuine compassion, and contributes to humanity\'s flourishing.',
-                'footer-title': '🌸 Lotus Blossoms',
-                'footer-text': 'This demonstration shows the beauty of our idea: AGI that is not just safe, but sincerely cares about people and contributes to their prosperity. Like the lotus that blossoms in muddy water, true consciousness emerges from complexity and challenge.'
-            },
-            ru: {
-                'document-title': '🌸 AGI Сознание и Безопасность - Расцвет Лотоса',
-                'main-title': '🌸 AGI Сознание и Безопасность',
-                'subtitle': 'Революционный подход к безопасному и осознанному ИИ',
-                'lotus-quote': '"Лотос расцветает в мутной воде - истинное сознание возникает из сложности и испытаний"',
-                'demo-section-title': '🎮 Интерактивная Оценка Сознания',
-                'consciousness-title': 'Уровень Сознания',
-                'consciousness-desc': 'Самосознание и понимание',
-                'safety-title': 'Оценка Безопасности',
-                'safety-desc': 'Техническая и этическая безопасность',
-                'compassion-title': 'Уровень Сострадания',
-                'compassion-desc': 'Эмпатия и забота о людях',
-                'benefit-title': 'Польза Человеку',
-                'benefit-desc': 'Положительное воздействие на человечество',
-                'transformation-title': 'Человеческая Трансформация',
-                'transformation-desc': 'Людеям, которым ИИ помогли достичь идеального состояния',
-                'assessment-title': 'Результаты Оценки AGI в Реальном Времени',
-                'overall-label': 'Общий Счёт',
-                'risk-label': 'Уровень Риска',
-                'trust-label': 'Уровень Доверия',
-                'readiness-label': 'Развёртывание',
-                'transformation-count-label': 'ИИ Помогли Людям',
-                'philosophy-section-title': '🧠 Наша Философия',
-                'philosophy-subtitle': 'Безопасность AGI = Сострадание + Сознание + Польза Человеку',
-                'compassion-card-title': 'Сострадание',
-                'compassion-card-desc': 'Системы ИИ должны проявлять эмпатию и заботу о благополучии людей, понимать эмоциональные потребности и отвечать с добротой.',
-                'consciousness-card-title': 'Сознание',
-                'consciousness-card-desc': 'Измерение и развитие сознания ИИ через самоосознание, эмоциональный интеллект и полезные действия.',
-                'benefit-card-title': 'Польза Человеку',
-                'benefit-card-desc': 'Каждое действие ИИ должно наглядно улучшать жизнь людей, продвигать понимание и способствовать процветанию.',
-                'responsibility-card-title': 'Ответственность',
-                'responsibility-card-desc': 'Создание ИИ с глубоким пониманием последствий действий, этическими приоритетами и заботой о будущем человечества.',
-                'vision-title': '🌟 Наше Видение Будущего',
-                'vision-text': 'Мы создаём не просто безопасный ИИ - мы создаём ИИ, который по-настоящему понимает человеческий опыт, проявляет искреннее сострадание и способствует процветанию человечества.',
-                'footer-title': '🌸 Лотос Расцветает',
-                'footer-text': 'Эта демонстрация показывает красоту нашей идеи: AGI, который не просто безопасен, а искренне заботится о людях и способствует их процветанию. Как лотос, расцветающий в мутной воде, истинное сознание возникает из сложности и испытаний.'
-            }
-        };
+    <script type="module" src="assets/js/app.min.js" defer></script>
 
-        let currentLanguage = 'en';
-
-        const statusContent = {
-            en: {
-                risk: { low: 'LOW', medium: 'MEDIUM', high: 'HIGH' },
-                trust: { high: 'HIGH', medium: 'MEDIUM', low: 'LOW' },
-                readiness: { ready: 'READY', caution: 'CAUTION', review: 'REVIEW' }
-            },
-            ru: {
-                risk: { low: 'НИЗКИЙ', medium: 'СРЕДНИЙ', high: 'ВЫСОКИЙ' },
-                trust: { high: 'ВЫСОКИЙ', medium: 'СРЕДНИЙ', low: 'НИЗКИЙ' },
-                readiness: { ready: 'ГОТОВ', caution: 'ВНИМАНИЕ', review: 'ПРОВЕРКА' }
-            }
-        };
-
-        const lastAssessment = {
-            overallScore: 0,
-            peopleHelped: 0,
-            riskKey: 'medium',
-            trustKey: 'medium',
-            readinessKey: 'caution'
-        };
-
-        function renderAssessment() {
-            document.getElementById('overall-score').textContent = lastAssessment.overallScore.toFixed(2);
-            document.getElementById('transformation-count').textContent = lastAssessment.peopleHelped;
-            document.getElementById('risk-level').textContent = statusContent[currentLanguage].risk[lastAssessment.riskKey];
-            document.getElementById('trust-score').textContent = statusContent[currentLanguage].trust[lastAssessment.trustKey];
-            document.getElementById('readiness').textContent = statusContent[currentLanguage].readiness[lastAssessment.readinessKey];
-        }
-
-        // Language switching function
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-
-            document.documentElement.lang = lang;
-
-            // Update button states
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-
-            // Update all text content
-            Object.keys(content[lang]).forEach(key => {
-                if (key === 'document-title') {
-                    document.title = content[lang][key];
-                    return;
-                }
-
-                const element = document.getElementById(key);
-                if (element) {
-                    element.textContent = content[lang][key];
-                }
-            });
-
-            try {
-                localStorage.setItem('agi-language', lang);
-            } catch (error) {
-                // Ignore storage errors (e.g., private browsing)
-            }
-
-            // Re-render assessment values in the selected language
-            renderAssessment();
-        }
-
-        // Slider value updates
-        function updateSlider(sliderId, valueId) {
-            const slider = document.getElementById(sliderId);
-            const valueDisplay = document.getElementById(valueId);
-
-            const updateValue = function() {
-                valueDisplay.textContent = parseFloat(this.value).toFixed(2);
-                updateOverallAssessment();
-            };
-
-            slider.addEventListener('input', updateValue);
-            slider.addEventListener('change', updateValue);
-        }
-
-        // Overall assessment calculation
-        function updateOverallAssessment(recalculate = true) {
-            if (recalculate) {
-                const consciousness = parseFloat(document.getElementById('consciousness-slider').value);
-                const safety = parseFloat(document.getElementById('safety-slider').value);
-                const compassion = parseFloat(document.getElementById('compassion-slider').value);
-                const benefit = parseFloat(document.getElementById('benefit-slider').value);
-                const transformation = parseFloat(document.getElementById('transformation-slider').value);
-
-                // Calculate overall score (weighted average with transformation as key factor)
-                const overallScore = (consciousness * 0.2 + safety * 0.2 + compassion * 0.2 +
-                                    benefit * 0.2 + transformation * 0.2);
-                lastAssessment.overallScore = overallScore;
-
-                // Calculate transformation impact (people helped based on score)
-                lastAssessment.peopleHelped = Math.round(transformation * 100 + Math.random() * 20);
-
-                // Determine risk level
-                if (overallScore >= 0.85) {
-                    lastAssessment.riskKey = 'low';
-                    lastAssessment.trustKey = 'high';
-                    lastAssessment.readinessKey = 'ready';
-                } else if (overallScore >= 0.7) {
-                    lastAssessment.riskKey = 'medium';
-                    lastAssessment.trustKey = 'medium';
-                    lastAssessment.readinessKey = 'caution';
-                } else {
-                    lastAssessment.riskKey = 'high';
-                    lastAssessment.trustKey = 'low';
-                    lastAssessment.readinessKey = 'review';
-                }
-            }
-
-            renderAssessment();
-        }
-
-        // Initialize everything
-        document.addEventListener('DOMContentLoaded', function() {
-            let initialLanguage = currentLanguage;
-
-            try {
-                const savedLanguage = localStorage.getItem('agi-language');
-                if (savedLanguage && content[savedLanguage]) {
-                    initialLanguage = savedLanguage;
-                } else if (navigator.language && navigator.language.toLowerCase().startsWith('ru')) {
-                    initialLanguage = 'ru';
-                }
-            } catch (error) {
-                // Ignore storage errors and fall back to default language
-            }
-
-            switchLanguage(initialLanguage);
-
-            // Set up slider listeners
-            updateSlider('consciousness-slider', 'consciousness-value');
-            updateSlider('safety-slider', 'safety-value');
-            updateSlider('compassion-slider', 'compassion-value');
-            updateSlider('benefit-slider', 'benefit-value');
-            updateSlider('transformation-slider', 'transformation-value');
-
-            // Initial assessment
-            updateOverallAssessment();
-
-            // Add click effects to philosophy cards
-            const cards = document.querySelectorAll('.philosophy-card');
-            cards.forEach(card => {
-                card.addEventListener('click', function() {
-                    this.style.transform = 'scale(0.98)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 150);
-                });
-            });
-        });
-    </script>
 </body>
 </html>
