@@ -1,4 +1,4 @@
-name: Claude Review (Test)
+name: Claude Review
 on:
   issue_comment:
     types: [created]
@@ -16,25 +16,27 @@ jobs:
 
       - name: Get short diff
         run: |
+          # Берём только первые 200 строк для теста
           gh pr diff ${{ github.event.issue.number }} | head -n 200 > diff.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prepare request
+      - name: Build JSON request via jq
         run: |
-          jq -Rs . < diff.txt > diff.json
-          cat > request.json <<EOF
-          {
-            "model": "claude-3-haiku-20240307",
-            "max_tokens": 500,
-            "messages": [
-              {
-                "role": "user",
-                "content": "Проанализируй этот PR и предложи улучшения:\n$(cat diff.json)"
-              }
-            ]
-          }
-          EOF
+          # Формируем JSON целиком через jq, чтобы избежать ошибок экранирования
+          jq -n \
+            --arg model "claude-3-haiku-20240307" \
+            --arg diff "$(cat diff.txt)" \
+            '{
+              model: $model,
+              max_tokens: 500,
+              messages: [
+                {
+                  role: "user",
+                  content: "Проанализируй этот PR и предложи улучшения:\n\($diff)"
+                }
+              ]
+            }' > request.json
 
       - name: Call Claude API
         run: |
