@@ -1,0 +1,11 @@
+{
+  "name": "agi-consciousness-safety",
+  "version": "1.0.0",
+  "description": "Frontend tooling and automated tests for the AGI consciousness safety demo.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/minify.js",
+    "test": "node scripts/minify.js && node --test web-tests"
+  },
+  "license": "MIT"
+}
