@@ -1,0 +1,33 @@
+name: Claude Review
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get PR diff
+        run: gh pr diff ${{ github.event.issue.number }} > diff.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Call Claude API
+        run: |
+          RESPONSE=$(curl https://api.anthropic.com/v1/messages \
+            -H "x-api-key: ${{ secrets.CLAUDE_API_KEY }}" \
+            -H "content-type: application/json" \
+            -d "{
+              \"model\": \"claude-3-opus-20240229\",
+              \"max_tokens\": 1000,
+              \"messages\": [
+                {\"role\": \"user\", \"content\": \"Проанализируй этот PR и предложи улучшения:\n$(cat diff.txt)\"}
+              ]
+            }" | jq -r '.content[0].text')
+          gh pr comment ${{ github.event.issue.number }} --body "$RESPONSE"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
