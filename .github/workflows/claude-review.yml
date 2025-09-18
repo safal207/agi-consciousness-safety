@@ -38,8 +38,8 @@ jobs:
           }
           EOF
 
-          # Подставляем diff без передачи его в аргументах (чтобы избежать Argument list too long)
-          awk -v diff="$(< diff.json)" '{gsub(/DIFF_PLACEHOLDER/, diff)}1' request.json > request_filled.json
+          # Подставляем diff, читая его прямо из файла, чтобы избежать лимита аргументов
+          awk 'NR==FNR {diff=$0; next} {gsub(/DIFF_PLACEHOLDER/, diff)}1' diff.json request.json > request_filled.json
           mv request_filled.json request.json
 
       - name: Call Claude API
