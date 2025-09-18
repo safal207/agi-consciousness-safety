@@ -1,4 +1,4 @@
-name: Claude Review
+name: Claude Review (Test)
 on:
   issue_comment:
     types: [created]
@@ -14,33 +14,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get available models
+      - name: Get short diff
         run: |
-          curl -s https://api.anthropic.com/v1/models \
-            -H "x-api-key: ${{ secrets.CLAUDE_API_KEY }}" \
-            -H "anthropic-version: 2023-06-01" | jq -r '.data[].id' > models.txt
-
-          echo "Доступные модели:"
-          cat models.txt
-
-          # Берём первую доступную модель
-          MODEL=$(head -n 1 models.txt)
-          echo "MODEL=$MODEL" >> $GITHUB_ENV
-
-      - name: Get PR diff (limited)
-        run: |
-          gh pr diff ${{ github.event.issue.number }} | head -n 2000 > diff.txt
+          gh pr diff ${{ github.event.issue.number }} | head -n 200 > diff.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prepare request for Claude
+      - name: Prepare request
         run: |
           jq -Rs . < diff.txt > diff.json
-
           cat > request.json <<EOF
           {
-            "model": "${MODEL}",
-            "max_tokens": 1000,
+            "model": "claude-3-haiku-20240307",
+            "max_tokens": 500,
             "messages": [
               {
                 "role": "user",
@@ -58,7 +44,16 @@ jobs:
             -H "content-type: application/json" \
             -d @request.json | tee api_response.json
 
-          RESPONSE=$(jq -r '.content[0].text // "❌ Claude не вернул ответа"' api_response.json)
+          RESPONSE=$(jq -r '
+            if .content and .content[0] and .content[0].text then
+              .content[0].text
+            elif .error and .error.message then
+              "❌ Claude API error: " + .error.message
+            else
+              "❌ Claude не вернул ответа"
+            end
+          ' api_response.json)
+
           echo "$RESPONSE" > response.txt
           gh pr comment ${{ github.event.issue.number }} --body-file response.txt
         env:
