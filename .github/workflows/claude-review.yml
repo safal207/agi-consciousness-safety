@@ -19,21 +19,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Prepare request for Claude
+        run: |
+          # Экранируем diff в JSON-строку
+          jq -Rs . < diff.txt > diff.json
+
+          # Формируем JSON-запрос с плейсхолдером
+          cat > request.json <<'EOF'
+          {
+            "model": "claude-3-opus-20240229",
+            "max_tokens": 1000,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Проанализируй этот PR и предложи улучшения:\nDIFF_PLACEHOLDER"
+              }
+            ]
+          }
+          EOF
+
+          # Подставляем экранированный diff в JSON-запрос
+          DIFF_ESCAPED=$(cat diff.json)
+          sed -i "s|DIFF_PLACEHOLDER|$DIFF_ESCAPED|" request.json
+
       - name: Call Claude API
         run: |
-          # Читаем diff и экранируем в JSON-строку
-          DIFF_CONTENT=$(jq -Rs . < diff.txt)
-
           RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
             -H "x-api-key: ${{ secrets.CLAUDE_API_KEY }}" \
             -H "content-type: application/json" \
-            -d "{
-              \"model\": \"claude-3-opus-20240229\",
-              \"max_tokens\": 1000,
-              \"messages\": [
-                {\"role\": \"user\", \"content\": \"Проанализируй этот PR и предложи улучшения:\n${DIFF_CONTENT}\"}
-              ]
-            }" | jq -r '.content[0].text // "❌ Claude не вернул ответа"')
+            -d @request.json | jq -r '.content[0].text // "❌ Claude не вернул ответа"')
 
           echo "$RESPONSE" > response.txt
           gh pr comment ${{ github.event.issue.number }} --body-file response.txt
