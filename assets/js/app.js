@@ -198,7 +198,7 @@ const state = {
 const sliderElements = new Map();
 const resultElements = {};
 
-const activationKeys = new Set(['Enter', ' ']);
+const activationKeys = new Set(['Enter', ' ', 'Space', 'Spacebar']);
 
 function getLanguageStrings(lang) {
     return translations[lang] ?? translations.en;
@@ -213,9 +213,19 @@ function configureLiveRegion(element) {
     element.setAttribute('aria-atomic', 'true');
 }
 
+function normalizeActivationKey(key) {
+    if (typeof key !== 'string') {
+        return '';
+    }
+    if (key === ' ') {
+        return ' ';
+    }
+    return key.trim();
+}
+
 function attachKeyboardActivation(element, callback) {
     element.addEventListener('keydown', event => {
-        if (activationKeys.has(event.key)) {
+        if (activationKeys.has(normalizeActivationKey(event.key))) {
             event.preventDefault();
             callback(event);
         }
@@ -247,8 +257,10 @@ function activateTrueStateApproach(doc, slug) {
 
         if (panel) {
             if (isActive) {
+                panel.hidden = false;
                 panel.removeAttribute('hidden');
             } else {
+                panel.hidden = true;
                 panel.setAttribute('hidden', 'true');
             }
             panel.setAttribute('aria-hidden', String(!isActive));
