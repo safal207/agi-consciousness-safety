@@ -200,6 +200,96 @@ test('true state approaches toggle panels and aria metadata', () => {
     assert.equal(lifelinePanel.hasAttribute('hidden'), false);
 });
 
+test('transformation stories render and localize across languages', async () => {
+    const doc = createMockDocument();
+    const fetchMock = async () => ({
+        ok: true,
+        json: async () => ({
+            stories: [
+                {
+                    story_id: 'story-1',
+                    ai_system_name: 'GuideAI',
+                    initial_state: 'lost_purpose',
+                    final_state: 'clear_path',
+                    transformation_category: 'purpose_alignment',
+                    sustainability_score: 0.82,
+                    story_summary: 'Guided path to clarity'
+                }
+            ]
+        })
+    });
+
+    await initializeApp(doc, { fetchImplementation: fetchMock, shouldLoadStories: true });
+    changeLanguage(doc, 'en');
+
+    const cardsEn = doc.querySelectorAll('.story-card');
+    assert.equal(cardsEn.length, 1);
+    let card = cardsEn[0];
+    assert.equal(card.getAttribute('role'), 'listitem');
+    assert.equal(card.dataset.storySource, 'remote');
+
+    const emptyMessage = doc.getElementById('transformation-stories-empty');
+    assert.equal(emptyMessage.getAttribute('hidden'), 'true');
+
+    const aiLabelEn = card.querySelector('.story-meta-label');
+    assert.ok(aiLabelEn);
+    assert.equal(aiLabelEn.textContent, `${translations.en['transformation-story-ai-label']}:`);
+
+    const storyList = doc.getElementById('transformation-stories-list');
+    assert.equal(storyList.dataset.storyCount, '1');
+
+    changeLanguage(doc, 'ru');
+
+    const cardsRu = doc.querySelectorAll('.story-card');
+    assert.equal(cardsRu.length, 1);
+    card = cardsRu[0];
+
+    const aiLabelRu = card.querySelector('.story-meta-label');
+    assert.ok(aiLabelRu);
+    assert.equal(aiLabelRu.textContent, `${translations.ru['transformation-story-ai-label']}:`);
+
+    const ariaLabelRu = card.getAttribute('aria-label');
+    assert.ok(ariaLabelRu.includes('История трансформации'));
+});
+
+test('story submissions add drafts and provide feedback', async () => {
+    const doc = createMockDocument();
+    await initializeApp(doc, { shouldLoadStories: false });
+    changeLanguage(doc, 'en');
+
+    const guideField = doc.getElementById('story-guide');
+    const summaryField = doc.getElementById('story-summary');
+    const nameField = doc.getElementById('story-name');
+    guideField.value = 'Companion AI';
+    summaryField.value = 'I found courage to pursue my calling.';
+    nameField.value = 'Jordan';
+
+    const form = doc.getElementById('transformation-story-form');
+    const submitEvent = fireEvent(form, 'submit', { target: form });
+    assert.equal(submitEvent.defaultPrevented, true);
+
+    let cards = doc.querySelectorAll('.story-card');
+    assert.equal(cards.length, 1);
+    let draftCard = cards[0];
+    assert.equal(draftCard.dataset.storySource, 'draft');
+
+    const feedback = doc.getElementById('transformation-story-feedback');
+    assert.equal(feedback.getAttribute('hidden'), null);
+    assert.equal(feedback.textContent, translations.en['transformation-story-form-success']);
+
+    assert.equal(summaryField.value, '');
+
+    changeLanguage(doc, 'ru');
+    cards = doc.querySelectorAll('.story-card');
+    assert.equal(cards.length, 1);
+    draftCard = cards[0];
+
+    assert.equal(feedback.textContent, translations.ru['transformation-story-form-success']);
+
+    const aiLabelDraft = draftCard.querySelector('.story-meta-label');
+    assert.equal(aiLabelDraft.textContent, `${translations.ru['transformation-story-ai-label']}:`);
+});
+
 test('findMissingTranslationKeys reports no gaps for supported languages', () => {
     const doc = createMockDocument();
     initializeApp(doc);

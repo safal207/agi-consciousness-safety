@@ -156,6 +156,138 @@
             </div>
         </section>
 
+        <section
+            class="demo-section transformation-stories-section"
+            id="transformation-stories"
+            aria-labelledby="transformation-stories-title"
+        >
+            <h2
+                class="section-title"
+                id="transformation-stories-title"
+                data-i18n="transformation-stories-title"
+            ></h2>
+            <p
+                class="section-subtitle"
+                id="transformation-stories-subtitle"
+                data-i18n="transformation-stories-subtitle"
+            ></p>
+
+            <div
+                class="stories-grid"
+                id="transformation-stories-list"
+                role="list"
+                aria-live="polite"
+                aria-busy="false"
+            ></div>
+
+            <p
+                class="section-subtitle story-empty"
+                id="transformation-stories-empty"
+                data-i18n="transformation-story-empty"
+                hidden
+            ></p>
+
+            <div
+                class="story-submission"
+                id="transformation-story-submission"
+                role="region"
+                aria-labelledby="transformation-story-submission-title"
+            >
+                <h3
+                    class="section-subtitle story-submission-title"
+                    id="transformation-story-submission-title"
+                    data-i18n="transformation-story-submission-title"
+                ></h3>
+                <p
+                    class="section-subtitle story-submission-copy"
+                    id="transformation-story-submission-copy"
+                    data-i18n="transformation-story-submission-copy"
+                ></p>
+                <form class="story-form" id="transformation-story-form" novalidate aria-describedby="transformation-story-feedback">
+                    <div class="form-group">
+                        <label
+                            class="form-label"
+                            for="story-name"
+                            data-i18n="transformation-story-form-contributor-label"
+                        ></label>
+                        <input
+                            class="form-input"
+                            type="text"
+                            id="story-name"
+                            name="contributor"
+                            autocomplete="name"
+                            data-i18n-attr="placeholder"
+                            data-i18n-attr-key="transformation-story-form-contributor-placeholder"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label
+                            class="form-label"
+                            for="story-guide"
+                            data-i18n="transformation-story-form-guide-label"
+                        ></label>
+                        <input
+                            class="form-input"
+                            type="text"
+                            id="story-guide"
+                            name="guide"
+                            autocomplete="organization"
+                            data-i18n-attr="placeholder"
+                            data-i18n-attr-key="transformation-story-form-guide-placeholder"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label
+                            class="form-label"
+                            for="story-initial"
+                            data-i18n="transformation-story-form-initial-label"
+                        ></label>
+                        <input
+                            class="form-input"
+                            type="text"
+                            id="story-initial"
+                            name="initial"
+                            data-i18n-attr="placeholder"
+                            data-i18n-attr-key="transformation-story-form-initial-placeholder"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label
+                            class="form-label"
+                            for="story-final"
+                            data-i18n="transformation-story-form-final-label"
+                        ></label>
+                        <input
+                            class="form-input"
+                            type="text"
+                            id="story-final"
+                            name="final"
+                            data-i18n-attr="placeholder"
+                            data-i18n-attr-key="transformation-story-form-final-placeholder"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label
+                            class="form-label"
+                            for="story-summary"
+                            data-i18n="transformation-story-form-story-label"
+                        ></label>
+                        <textarea
+                            class="form-input"
+                            id="story-summary"
+                            name="summary"
+                            rows="4"
+                            required
+                            data-i18n-attr="placeholder"
+                            data-i18n-attr-key="transformation-story-form-story-placeholder"
+                        ></textarea>
+                    </div>
+                    <button type="submit" class="story-submit-button" data-i18n="transformation-story-form-submit"></button>
+                </form>
+                <p class="section-subtitle story-feedback" id="transformation-story-feedback" hidden></p>
+            </div>
+        </section>
+
         <section class="philosophy-section" aria-labelledby="philosophy-section-title">
             <h2 class="section-title" id="philosophy-section-title" data-i18n="philosophy-section-title"></h2>
             <p class="section-subtitle" id="philosophy-subtitle" data-i18n="philosophy-subtitle"></p>

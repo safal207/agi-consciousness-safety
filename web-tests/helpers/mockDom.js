@@ -687,6 +687,146 @@ export function createMockDocument() {
         approachList.appendChild(article);
     });
 
+    const storiesSection = doc.createElement('section');
+    storiesSection.className = 'demo-section transformation-stories-section';
+    storiesSection.id = 'transformation-stories';
+    storiesSection.setAttribute('aria-labelledby', 'transformation-stories-title');
+    container.appendChild(storiesSection);
+
+    const storiesTitle = doc.createElement('h2');
+    storiesTitle.className = 'section-title';
+    storiesTitle.id = 'transformation-stories-title';
+    setDataI18n(storiesTitle, 'transformation-stories-title');
+    storiesSection.appendChild(storiesTitle);
+
+    const storiesSubtitle = doc.createElement('p');
+    storiesSubtitle.className = 'section-subtitle';
+    storiesSubtitle.id = 'transformation-stories-subtitle';
+    setDataI18n(storiesSubtitle, 'transformation-stories-subtitle');
+    storiesSection.appendChild(storiesSubtitle);
+
+    const storiesList = doc.createElement('div');
+    storiesList.className = 'stories-grid';
+    storiesList.id = 'transformation-stories-list';
+    storiesList.setAttribute('role', 'list');
+    storiesList.setAttribute('aria-live', 'polite');
+    storiesList.setAttribute('aria-busy', 'false');
+    storiesSection.appendChild(storiesList);
+
+    const storiesEmpty = doc.createElement('p');
+    storiesEmpty.className = 'section-subtitle story-empty';
+    storiesEmpty.id = 'transformation-stories-empty';
+    setDataI18n(storiesEmpty, 'transformation-story-empty');
+    storiesEmpty.setAttribute('hidden', 'true');
+    storiesSection.appendChild(storiesEmpty);
+
+    const storySubmission = doc.createElement('div');
+    storySubmission.className = 'story-submission';
+    storySubmission.id = 'transformation-story-submission';
+    storySubmission.setAttribute('role', 'region');
+    storySubmission.setAttribute('aria-labelledby', 'transformation-story-submission-title');
+    storiesSection.appendChild(storySubmission);
+
+    const submissionTitle = doc.createElement('h3');
+    submissionTitle.className = 'section-subtitle story-submission-title';
+    submissionTitle.id = 'transformation-story-submission-title';
+    setDataI18n(submissionTitle, 'transformation-story-submission-title');
+    storySubmission.appendChild(submissionTitle);
+
+    const submissionCopy = doc.createElement('p');
+    submissionCopy.className = 'section-subtitle story-submission-copy';
+    submissionCopy.id = 'transformation-story-submission-copy';
+    setDataI18n(submissionCopy, 'transformation-story-submission-copy');
+    storySubmission.appendChild(submissionCopy);
+
+    const storyForm = doc.createElement('form');
+    storyForm.className = 'story-form';
+    storyForm.id = 'transformation-story-form';
+    storyForm.setAttribute('novalidate', 'true');
+    storyForm.setAttribute('aria-describedby', 'transformation-story-feedback');
+    storySubmission.appendChild(storyForm);
+
+    const formConfigs = [
+        {
+            id: 'story-name',
+            labelKey: 'transformation-story-form-contributor-label',
+            placeholderKey: 'transformation-story-form-contributor-placeholder',
+            attributes: { type: 'text', name: 'contributor', autocomplete: 'name' }
+        },
+        {
+            id: 'story-guide',
+            labelKey: 'transformation-story-form-guide-label',
+            placeholderKey: 'transformation-story-form-guide-placeholder',
+            attributes: { type: 'text', name: 'guide', autocomplete: 'organization' }
+        },
+        {
+            id: 'story-initial',
+            labelKey: 'transformation-story-form-initial-label',
+            placeholderKey: 'transformation-story-form-initial-placeholder',
+            attributes: { type: 'text', name: 'initial' }
+        },
+        {
+            id: 'story-final',
+            labelKey: 'transformation-story-form-final-label',
+            placeholderKey: 'transformation-story-form-final-placeholder',
+            attributes: { type: 'text', name: 'final' }
+        }
+    ];
+
+    formConfigs.forEach(config => {
+        const group = doc.createElement('div');
+        group.className = 'form-group';
+        storyForm.appendChild(group);
+
+        const label = doc.createElement('label');
+        label.className = 'form-label';
+        label.setAttribute('for', config.id);
+        setDataI18n(label, config.labelKey);
+        group.appendChild(label);
+
+        const input = doc.createElement('input');
+        input.className = 'form-input';
+        input.id = config.id;
+        input.setAttribute('data-i18n-attr', 'placeholder');
+        input.setAttribute('data-i18n-attr-key', config.placeholderKey);
+        Object.entries(config.attributes).forEach(([key, value]) => {
+            input.setAttribute(key, value);
+        });
+        group.appendChild(input);
+    });
+
+    const summaryGroup = doc.createElement('div');
+    summaryGroup.className = 'form-group';
+    storyForm.appendChild(summaryGroup);
+
+    const summaryLabel = doc.createElement('label');
+    summaryLabel.className = 'form-label';
+    summaryLabel.setAttribute('for', 'story-summary');
+    setDataI18n(summaryLabel, 'transformation-story-form-story-label');
+    summaryGroup.appendChild(summaryLabel);
+
+    const summaryField = doc.createElement('textarea');
+    summaryField.className = 'form-input';
+    summaryField.id = 'story-summary';
+    summaryField.setAttribute('name', 'summary');
+    summaryField.setAttribute('rows', '4');
+    summaryField.setAttribute('required', 'true');
+    summaryField.setAttribute('data-i18n-attr', 'placeholder');
+    summaryField.setAttribute('data-i18n-attr-key', 'transformation-story-form-story-placeholder');
+    summaryGroup.appendChild(summaryField);
+
+    const submitButton = doc.createElement('button');
+    submitButton.className = 'story-submit-button';
+    submitButton.setAttribute('type', 'submit');
+    setDataI18n(submitButton, 'transformation-story-form-submit');
+    storyForm.appendChild(submitButton);
+
+    const storyFeedback = doc.createElement('p');
+    storyFeedback.className = 'section-subtitle story-feedback';
+    storyFeedback.id = 'transformation-story-feedback';
+    storyFeedback.setAttribute('hidden', 'true');
+    storySubmission.appendChild(storyFeedback);
+
     const philosophySection = doc.createElement('section');
     philosophySection.className = 'philosophy-section';
     philosophySection.setAttribute('aria-labelledby', 'philosophy-section-title');

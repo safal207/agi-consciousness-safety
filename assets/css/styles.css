@@ -381,6 +381,137 @@ body {
     display: none;
 }
 
+.stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 26px;
+    margin-bottom: 32px;
+}
+
+.story-card {
+    background: linear-gradient(135deg, var(--gradient-card-start) 0%, var(--gradient-card-end) 100%);
+    border-radius: 18px;
+    padding: 26px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 14px 32px rgba(25, 40, 90, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.story-title {
+    font-size: 1.2rem;
+    color: var(--accent-secondary);
+    font-weight: 700;
+}
+
+.story-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.95rem;
+    color: var(--text-subtle);
+}
+
+.story-meta-label {
+    font-weight: 600;
+    color: var(--accent-secondary);
+    margin-right: 4px;
+}
+
+.story-body {
+    font-size: 0.98rem;
+    color: var(--text-subtle);
+    line-height: 1.65;
+}
+
+.story-submission {
+    display: grid;
+    gap: 18px;
+    margin-top: 34px;
+}
+
+.story-form {
+    display: grid;
+    gap: 18px;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--accent-secondary);
+    font-size: 0.95rem;
+}
+
+.form-input {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(102, 126, 234, 0.35);
+    background: rgba(255, 255, 255, 0.92);
+    font-size: 1rem;
+    color: var(--text-body);
+    box-shadow: 0 8px 18px rgba(25, 40, 90, 0.12);
+    transition: box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.form-input:focus-visible {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.35);
+}
+
+.story-form textarea.form-input {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.story-submit-button {
+    justify-self: center;
+    padding: 12px 32px;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent-primary);
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(102, 126, 234, 0.35);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.story-submit-button:is(:hover, :focus-visible) {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(102, 126, 234, 0.4);
+}
+
+.story-submit-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.35), 0 16px 32px rgba(102, 126, 234, 0.4);
+}
+
+.story-feedback {
+    text-align: center;
+    margin-top: 12px;
+    color: var(--accent-secondary);
+}
+
+.story-feedback[data-feedback-state='error'] {
+    color: #c0392b;
+}
+
+.story-empty {
+    text-align: center;
+    margin-top: 12px;
+    color: var(--text-subtle);
+}
+
 .philosophy-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -503,6 +634,10 @@ body {
     }
 
     .true-state-approach-list {
+        grid-template-columns: 1fr;
+    }
+
+    .stories-grid {
         grid-template-columns: 1fr;
     }
 }

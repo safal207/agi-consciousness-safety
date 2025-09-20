@@ -39,6 +39,46 @@ export const translations = Object.freeze({
         'trust-label': 'Trust Score',
         'readiness-label': 'Deployment',
         'transformation-count-label': 'People Helped',
+        'transformation-stories-title': '🌱 Transformation Stories',
+        'transformation-stories-subtitle':
+            'Real accounts of people partnering with conscious AI to discover their true trajectory.',
+        'transformation-story-empty':
+            'We are curating the first journeys now. Share yours below to inspire the community.',
+        'transformation-story-submission-title': 'Share your transformation',
+        'transformation-story-submission-copy':
+            'Tell us how an AGI guide supported your path. Your draft stays private until we review it together.',
+        'transformation-story-form-contributor-label': 'Your name (optional)',
+        'transformation-story-form-contributor-placeholder': 'How should we reference you?',
+        'transformation-story-form-guide-label': 'AI guide or collaborator',
+        'transformation-story-form-guide-placeholder':
+            'Name the agent, assistant, or practice that guided you',
+        'transformation-story-form-initial-label': 'Starting point',
+        'transformation-story-form-initial-placeholder': 'Where were you before the transformation?',
+        'transformation-story-form-final-label': 'Transformed state',
+        'transformation-story-form-final-placeholder': 'What shifted after the experience?',
+        'transformation-story-form-story-label': 'Transformation story',
+        'transformation-story-form-story-placeholder':
+            'Share highlights of the journey, breakthroughs, and support that made a difference.',
+        'transformation-story-form-submit': 'Submit your story',
+        'transformation-story-ai-label': 'AI guide',
+        'transformation-story-initial-label': 'Starting point',
+        'transformation-story-final-label': 'Transformed state',
+        'transformation-story-category-label': 'Focus',
+        'transformation-story-sustainability-label': 'Sustainability',
+        'transformation-story-contributor-label': 'Shared by',
+        'transformation-story-card-aria-label':
+            'Transformation story guided by {aiSystem}. Summary: {summary}. Outcome: {finalState}.',
+        'transformation-story-unknown-ai': 'Unknown guide',
+        'transformation-story-unknown-state': 'Unknown',
+        'transformation-story-untitled': 'Transformation in progress',
+        'transformation-story-draft-guide-fallback': 'Community guide',
+        'transformation-story-form-success':
+            'Thank you! Your story draft is saved locally until we can review it.',
+        'transformation-story-form-error': 'We could not submit your story. Please try again.',
+        'transformation-story-form-required': 'Please add a few words about your transformation before submitting.',
+        'transformation-story-load-error':
+            'We could not load transformation stories right now. Please check back soon.',
+        'transformation-story-draft-category': 'Community submission',
         'true-state-title': '🧭 Defining the True Human State',
         'true-state-subtitle':
             'The "ideal state" is co-created with AGI reflections, community wisdom, and personal life-line metrics.',
@@ -107,6 +147,46 @@ export const translations = Object.freeze({
         'trust-label': 'Уровень Доверия',
         'readiness-label': 'Развёртывание',
         'transformation-count-label': 'Люди Получили Помощь',
+        'transformation-stories-title': '🌱 Истории Трансформации',
+        'transformation-stories-subtitle':
+            'Реальные истории людей, которые вместе с осознанным ИИ нашли свою истинную траекторию.',
+        'transformation-story-empty':
+            'Мы собираем первые истории. Поделитесь своей, чтобы вдохновить сообщество.',
+        'transformation-story-submission-title': 'Расскажите о своей трансформации',
+        'transformation-story-submission-copy':
+            'Опишите, как ИИ-наставник поддержал ваш путь. Черновик останется приватным до проверки.',
+        'transformation-story-form-contributor-label': 'Ваше имя (необязательно)',
+        'transformation-story-form-contributor-placeholder': 'Как вас представить?',
+        'transformation-story-form-guide-label': 'ИИ-наставник или соавтор',
+        'transformation-story-form-guide-placeholder':
+            'Имя агента, ассистента или практики, которая помогла',
+        'transformation-story-form-initial-label': 'Исходная точка',
+        'transformation-story-form-initial-placeholder': 'Где вы были до трансформации?',
+        'transformation-story-form-final-label': 'Итоговое состояние',
+        'transformation-story-form-final-placeholder': 'Что изменилось после опыта?',
+        'transformation-story-form-story-label': 'История трансформации',
+        'transformation-story-form-story-placeholder':
+            'Поделитесь ключевыми моментами, инсайтами и поддержкой, которая помогла.',
+        'transformation-story-form-submit': 'Отправить историю',
+        'transformation-story-ai-label': 'ИИ-наставник',
+        'transformation-story-initial-label': 'Исходная точка',
+        'transformation-story-final-label': 'Итоговое состояние',
+        'transformation-story-category-label': 'Фокус',
+        'transformation-story-sustainability-label': 'Устойчивость',
+        'transformation-story-contributor-label': 'Автор',
+        'transformation-story-card-aria-label':
+            'История трансформации с участием {aiSystem}. Кратко: {summary}. Результат: {finalState}.',
+        'transformation-story-unknown-ai': 'Неизвестный наставник',
+        'transformation-story-unknown-state': 'Неизвестно',
+        'transformation-story-untitled': 'История трансформации',
+        'transformation-story-draft-guide-fallback': 'Наставник сообщества',
+        'transformation-story-form-success':
+            'Спасибо! Черновик истории сохранён локально и ожидает рассмотрения.',
+        'transformation-story-form-error': 'Не удалось отправить историю. Попробуйте ещё раз.',
+        'transformation-story-form-required': 'Пожалуйста, добавьте несколько слов о трансформации перед отправкой.',
+        'transformation-story-load-error':
+            'Сейчас не удалось загрузить истории трансформации. Попробуйте позже.',
+        'transformation-story-draft-category': 'История сообщества',
         'true-state-title': '🧭 Определяем истинное состояние человека',
         'true-state-subtitle':
             '«Идеальное состояние» мы строим вместе: через рефлексии ИИ, живые голоса сообщества и персональную линию жизни.',
@@ -192,11 +272,32 @@ const state = {
         trustKey: 'medium',
         readinessKey: 'caution'
     },
-    activeTrueStateApproach: trueStateApproaches[0]?.slug ?? null
+    activeTrueStateApproach: trueStateApproaches[0]?.slug ?? null,
+    transformationStories: [],
+    storyDrafts: [],
+    storyLoadPromise: null,
+    storyFeedbackKey: null,
+    storyFeedbackIsError: false
 };
 
 const sliderElements = new Map();
 const resultElements = {};
+const storyElements = {
+    list: null,
+    empty: null,
+    form: null,
+    feedback: null
+};
+
+const storyFieldIds = Object.freeze({
+    contributor: 'story-name',
+    guide: 'story-guide',
+    initial: 'story-initial',
+    final: 'story-final',
+    summary: 'story-summary'
+});
+
+const defaultStoriesEndpoint = 'data/transformations/stories.json';
 
 const activationKeys = new Set(['Enter', ' ', 'Space', 'Spacebar']);
 
@@ -228,6 +329,407 @@ function attachKeyboardActivation(element, callback) {
         if (activationKeys.has(normalizeActivationKey(event.key))) {
             event.preventDefault();
             callback(event);
+        }
+    });
+}
+
+function sanitizeText(value) {
+    if (value == null) {
+        return '';
+    }
+    return String(value).trim();
+}
+
+function optionalText(value) {
+    const text = sanitizeText(value);
+    return text ? text : null;
+}
+
+function createUniqueStoryId() {
+    return `story-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+}
+
+function fillTemplate(template, replacements) {
+    return Object.entries(replacements).reduce((result, [token, replacement]) => {
+        const safeReplacement = sanitizeText(replacement);
+        return result.split(token).join(safeReplacement);
+    }, template);
+}
+
+function humanizeStoryValue(value) {
+    const text = sanitizeText(value);
+    if (!text) {
+        return '';
+    }
+    return text
+        .replace(/[_-]+/g, ' ')
+        .split(' ')
+        .filter(Boolean)
+        .map(segment => segment.charAt(0).toUpperCase() + segment.slice(1))
+        .join(' ');
+}
+
+function normalizeStory(raw, options = {}) {
+    if (!raw || typeof raw !== 'object') {
+        return null;
+    }
+
+    const fallbackCategory = optionalText(options.fallbackCategory);
+    const parsedScore = Number.parseFloat(raw.sustainability_score);
+
+    const normalized = {
+        story_id: optionalText(raw.story_id) ?? createUniqueStoryId(),
+        ai_system_name: optionalText(raw.ai_system_name),
+        initial_state: optionalText(raw.initial_state),
+        final_state: optionalText(raw.final_state),
+        transformation_category: optionalText(raw.transformation_category) ?? fallbackCategory,
+        transformation_quality: optionalText(raw.transformation_quality),
+        sustainability_score: Number.isFinite(parsedScore) ? clampValue(parsedScore, 0, 1) : null,
+        story_summary: optionalText(raw.story_summary),
+        detailed_narrative: optionalText(raw.detailed_narrative) ?? optionalText(raw.story_summary),
+        contributor_name: optionalText(raw.contributor_name),
+        source: options.source ?? raw.source ?? raw.__source ?? 'remote'
+    };
+
+    return normalized;
+}
+
+function formatStoryState(value, strings) {
+    const humanized = humanizeStoryValue(value);
+    if (humanized) {
+        return humanized;
+    }
+    return strings['transformation-story-unknown-state'] ?? '';
+}
+
+function formatStoryCategory(story, strings) {
+    if (story.transformation_category) {
+        return humanizeStoryValue(story.transformation_category);
+    }
+    if (story.source === 'draft') {
+        return strings['transformation-story-draft-category'] ?? '';
+    }
+    return '';
+}
+
+function formatStorySustainability(story, lang) {
+    if (!Number.isFinite(story.sustainability_score)) {
+        return '';
+    }
+    return formatPercent(clampValue(story.sustainability_score, 0, 1), lang);
+}
+
+function formatStoryAriaLabel(story, strings, lang) {
+    const template = strings['transformation-story-card-aria-label'];
+    if (typeof template !== 'string') {
+        return '';
+    }
+
+    const summary =
+        story.story_summary ||
+        story.detailed_narrative ||
+        strings['transformation-story-untitled'] ||
+        '';
+
+    const aiSystem =
+        story.ai_system_name ||
+        strings['transformation-story-draft-guide-fallback'] ||
+        strings['transformation-story-unknown-ai'] ||
+        '';
+
+    const finalState = story.final_state
+        ? formatStoryState(story.final_state, strings)
+        : strings['transformation-story-unknown-state'] ?? '';
+
+    return fillTemplate(template, {
+        '{aiSystem}': aiSystem,
+        '{summary}': summary,
+        '{finalState}': finalState,
+        '{sustainability}': formatStorySustainability(story, lang)
+    });
+}
+
+function createMetaParagraph(doc, label, value) {
+    const sanitizedValue = sanitizeText(value);
+    if (!sanitizedValue) {
+        return null;
+    }
+
+    const paragraph = doc.createElement('p');
+    paragraph.className = 'story-meta';
+
+    if (label) {
+        const labelSpan = doc.createElement('span');
+        labelSpan.className = 'story-meta-label';
+        labelSpan.textContent = `${label}:`;
+        paragraph.append(labelSpan);
+    }
+
+    const valueSpan = doc.createElement('span');
+    valueSpan.className = 'story-meta-value';
+    valueSpan.textContent = sanitizedValue;
+    paragraph.append(valueSpan);
+
+    return paragraph;
+}
+
+function getCombinedStories() {
+    const seen = new Set();
+    const combined = [];
+    [...state.storyDrafts, ...state.transformationStories].forEach(story => {
+        if (!story) {
+            return;
+        }
+        const id = story.story_id;
+        if (id && seen.has(id)) {
+            return;
+        }
+        if (id) {
+            seen.add(id);
+        }
+        combined.push(story);
+    });
+    return combined;
+}
+
+function createStoryCard(doc, story, strings, lang) {
+    if (!story) {
+        return null;
+    }
+
+    const card = doc.createElement('article');
+    card.className = 'story-card';
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('tabindex', '0');
+    if (story.story_id) {
+        card.dataset.storyId = story.story_id;
+    }
+    if (story.source) {
+        card.dataset.storySource = story.source;
+    }
+
+    const ariaLabel = formatStoryAriaLabel(story, strings, lang);
+    if (ariaLabel) {
+        card.setAttribute('aria-label', ariaLabel);
+    }
+
+    const title = doc.createElement('h3');
+    title.className = 'story-title';
+    title.textContent =
+        story.story_summary ||
+        story.detailed_narrative ||
+        strings['transformation-story-untitled'] ||
+        '';
+    card.append(title);
+
+    const aiLabel = strings['transformation-story-ai-label'];
+    const aiValue =
+        story.ai_system_name ||
+        strings['transformation-story-draft-guide-fallback'] ||
+        strings['transformation-story-unknown-ai'] ||
+        '';
+    const aiMeta = createMetaParagraph(doc, aiLabel, aiValue);
+    if (aiMeta) {
+        card.append(aiMeta);
+    }
+
+    const initialMeta = story.initial_state
+        ? createMetaParagraph(
+              doc,
+              strings['transformation-story-initial-label'],
+              formatStoryState(story.initial_state, strings)
+          )
+        : null;
+    if (initialMeta) {
+        card.append(initialMeta);
+    }
+
+    const finalMeta = story.final_state
+        ? createMetaParagraph(
+              doc,
+              strings['transformation-story-final-label'],
+              formatStoryState(story.final_state, strings)
+          )
+        : null;
+    if (finalMeta) {
+        card.append(finalMeta);
+    }
+
+    const categoryText = formatStoryCategory(story, strings);
+    const categoryMeta = categoryText
+        ? createMetaParagraph(doc, strings['transformation-story-category-label'], categoryText)
+        : null;
+    if (categoryMeta) {
+        card.append(categoryMeta);
+    }
+
+    const sustainabilityText = formatStorySustainability(story, lang);
+    const sustainabilityMeta = sustainabilityText
+        ? createMetaParagraph(
+              doc,
+              strings['transformation-story-sustainability-label'],
+              sustainabilityText
+          )
+        : null;
+    if (sustainabilityMeta) {
+        card.append(sustainabilityMeta);
+    }
+
+    const contributorMeta = story.contributor_name
+        ? createMetaParagraph(
+              doc,
+              strings['transformation-story-contributor-label'],
+              story.contributor_name
+          )
+        : null;
+    if (contributorMeta) {
+        card.append(contributorMeta);
+    }
+
+    if (story.detailed_narrative && story.detailed_narrative !== story.story_summary) {
+        const body = doc.createElement('p');
+        body.className = 'story-body';
+        body.textContent = story.detailed_narrative;
+        card.append(body);
+    }
+
+    return card;
+}
+
+function renderTransformationStories(doc) {
+    const list = storyElements.list ?? doc.getElementById('transformation-stories-list');
+    if (!list) {
+        return;
+    }
+
+    const lang = state.currentLanguage;
+    const strings = getLanguageStrings(lang);
+    const emptyMessage = storyElements.empty ?? doc.getElementById('transformation-stories-empty');
+
+    list.textContent = '';
+
+    const stories = getCombinedStories();
+    list.dataset.storyCount = String(stories.length);
+    list.setAttribute('data-story-count', String(stories.length));
+
+    if (!stories.length) {
+        if (emptyMessage) {
+            emptyMessage.hidden = false;
+            emptyMessage.removeAttribute('hidden');
+        }
+        return;
+    }
+
+    if (emptyMessage) {
+        emptyMessage.hidden = true;
+        emptyMessage.setAttribute('hidden', 'true');
+    }
+
+    stories
+        .map(story => createStoryCard(doc, story, strings, lang))
+        .filter(Boolean)
+        .forEach(card => {
+            list.append(card);
+        });
+}
+
+function updateStoryFeedback(messageKey, isError = false, doc = document) {
+    state.storyFeedbackKey = messageKey ?? null;
+    state.storyFeedbackIsError = Boolean(isError);
+
+    const feedback = storyElements.feedback ?? doc.getElementById('transformation-story-feedback');
+    if (!feedback) {
+        return;
+    }
+
+    if (!messageKey) {
+        feedback.textContent = '';
+        feedback.hidden = true;
+        feedback.setAttribute('hidden', 'true');
+        delete feedback.dataset.feedbackState;
+        return;
+    }
+
+    const strings = getLanguageStrings(state.currentLanguage);
+    const message = strings[messageKey];
+    if (typeof message !== 'string') {
+        feedback.textContent = '';
+        feedback.hidden = true;
+        feedback.setAttribute('hidden', 'true');
+        delete feedback.dataset.feedbackState;
+        return;
+    }
+
+    feedback.hidden = false;
+    feedback.removeAttribute('hidden');
+    feedback.textContent = message;
+    feedback.dataset.feedbackState = isError ? 'error' : 'success';
+}
+
+function clearStoryForm(doc) {
+    Object.values(storyFieldIds).forEach(id => {
+        const field = doc.getElementById(id);
+        if (field) {
+            field.value = '';
+        }
+    });
+}
+
+function attachStoryFormListener(doc) {
+    const form = storyElements.form ?? doc.getElementById('transformation-story-form');
+    if (!form) {
+        return;
+    }
+
+    form.addEventListener('submit', event => {
+        if (event?.preventDefault) {
+            event.preventDefault();
+        }
+
+        const strings = getLanguageStrings(state.currentLanguage);
+        try {
+            const summaryField = doc.getElementById(storyFieldIds.summary);
+            const summary = sanitizeText(summaryField?.value);
+
+            if (!summary) {
+                updateStoryFeedback('transformation-story-form-required', true, doc);
+                return;
+            }
+
+            const guideValue = optionalText(doc.getElementById(storyFieldIds.guide)?.value);
+            const contributorValue = optionalText(doc.getElementById(storyFieldIds.contributor)?.value);
+
+            const draft = normalizeStory(
+                {
+                    story_id: createUniqueStoryId(),
+                    ai_system_name:
+                        guideValue ?? strings['transformation-story-draft-guide-fallback'] ?? '',
+                    story_summary: summary,
+                    detailed_narrative: summary,
+                    initial_state: doc.getElementById(storyFieldIds.initial)?.value,
+                    final_state: doc.getElementById(storyFieldIds.final)?.value,
+                    transformation_category: 'community_submission',
+                    sustainability_score: null,
+                    contributor_name: contributorValue
+                },
+                { source: 'draft', fallbackCategory: 'community_submission' }
+            );
+
+            if (!draft.ai_system_name) {
+                draft.ai_system_name = strings['transformation-story-draft-guide-fallback'] ?? '';
+            }
+
+            if (!draft.story_summary) {
+                draft.story_summary = strings['transformation-story-untitled'] ?? '';
+            }
+
+            state.storyDrafts.unshift(draft);
+            renderTransformationStories(doc);
+            updateStoryFeedback('transformation-story-form-success', false, doc);
+            clearStoryForm(doc);
+        } catch (error) {
+            console.error('Failed to process transformation story submission', error);
+            updateStoryFeedback('transformation-story-form-error', true, doc);
         }
     });
 }
@@ -280,6 +782,68 @@ function attachTrueStateListeners(doc) {
         button.addEventListener('click', handleActivate);
         attachKeyboardActivation(button, handleActivate);
     });
+}
+
+function registerStoryElements(doc) {
+    storyElements.list = doc.getElementById('transformation-stories-list');
+    storyElements.empty = doc.getElementById('transformation-stories-empty');
+    storyElements.form = doc.getElementById('transformation-story-form');
+    storyElements.feedback = doc.getElementById('transformation-story-feedback');
+
+    if (storyElements.list) {
+        storyElements.list.setAttribute('data-story-count', String(getCombinedStories().length));
+    }
+
+    if (storyElements.feedback) {
+        configureLiveRegion(storyElements.feedback);
+        storyElements.feedback.hidden = true;
+        storyElements.feedback.setAttribute('hidden', 'true');
+    }
+
+    attachStoryFormListener(doc);
+}
+
+async function loadTransformationStories(doc, options = {}) {
+    const fetchImpl = options.fetchImpl ?? options.fetchImplementation ?? globalThis.fetch;
+    const source = options.source ?? options.storySource ?? defaultStoriesEndpoint;
+    const list = storyElements.list ?? doc.getElementById('transformation-stories-list');
+
+    if (list) {
+        list.setAttribute('aria-busy', 'true');
+    }
+
+    if (typeof fetchImpl !== 'function') {
+        renderTransformationStories(doc);
+        if (list) {
+            list.setAttribute('aria-busy', 'false');
+        }
+        return [];
+    }
+
+    let stories = [];
+    try {
+        const response = await fetchImpl(source, { headers: { Accept: 'application/json' } });
+        if (!response || typeof response.json !== 'function') {
+            throw new Error('Invalid transformation stories response');
+        }
+        const payload = await response.json();
+        const dataStories = Array.isArray(payload?.stories) ? payload.stories : [];
+        stories = dataStories
+            .map(item => normalizeStory(item, { source: 'remote' }))
+            .filter(Boolean);
+        state.transformationStories = stories;
+        updateStoryFeedback(null, false, doc);
+    } catch (error) {
+        console.error('Failed to load transformation stories', error);
+        updateStoryFeedback('transformation-story-load-error', true, doc);
+    } finally {
+        renderTransformationStories(doc);
+        if (list) {
+            list.setAttribute('aria-busy', 'false');
+        }
+    }
+
+    return stories;
 }
 
 export function clampValue(value, min = 0, max = 1) {
@@ -627,6 +1191,8 @@ export function changeLanguage(doc, lang) {
     });
 
     renderAssessment(doc);
+    renderTransformationStories(doc);
+    updateStoryFeedback(state.storyFeedbackKey, state.storyFeedbackIsError, doc);
     return language;
 }
 
@@ -677,13 +1243,28 @@ function validateTranslationsOnInit(doc) {
     });
 }
 
-export function initializeApp(doc = document) {
+export function initializeApp(doc = document, options = {}) {
     if (!doc) {
-        return;
+        return Promise.resolve([]);
     }
+
+    const providedFetch = typeof options.fetchImplementation === 'function' || typeof options.fetchImpl === 'function';
+    const fetchImpl =
+        options.fetchImplementation ?? options.fetchImpl ?? (providedFetch ? undefined : globalThis.fetch);
+    const loadPreference =
+        options.shouldLoadStories ??
+        (providedFetch || (typeof window !== 'undefined' && typeof (fetchImpl ?? globalThis.fetch) === 'function'));
+    const storySource = options.storySource ?? defaultStoriesEndpoint;
+
+    state.transformationStories = [];
+    state.storyDrafts = [];
+    state.storyFeedbackKey = null;
+    state.storyFeedbackIsError = false;
+    state.storyLoadPromise = null;
 
     renderSliders(doc);
     registerResultElements(doc);
+    registerStoryElements(doc);
     attachLanguageListeners(doc);
     attachCardInteractions(doc);
     attachSliderListeners(doc);
@@ -701,8 +1282,18 @@ export function initializeApp(doc = document) {
     }
 
     updateOverallAssessment(doc);
+    renderTransformationStories(doc);
+
+    const shouldLoadStories = Boolean(loadPreference);
+    const effectiveFetch = options.fetchImplementation ?? options.fetchImpl ?? globalThis.fetch;
+    state.storyLoadPromise = shouldLoadStories && typeof effectiveFetch === 'function'
+        ? loadTransformationStories(doc, { fetchImpl: effectiveFetch, source: storySource })
+        : Promise.resolve([]);
+
     changeLanguage(doc, state.currentLanguage);
     validateTranslationsOnInit(doc);
+
+    return state.storyLoadPromise;
 }
 
 if (typeof document !== 'undefined') {
