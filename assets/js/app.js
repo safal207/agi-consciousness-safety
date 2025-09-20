@@ -39,6 +39,18 @@ export const translations = Object.freeze({
         'trust-label': 'Trust Score',
         'readiness-label': 'Deployment',
         'transformation-count-label': 'People Helped',
+        'analytics-title': '📈 Transformation Analytics',
+        'analytics-subtitle': 'Visual summaries of category impact and monthly progress.',
+        'analytics-visuals-label': 'Transformation analytics visualizations',
+        'analytics-loading': 'Loading analytics…',
+        'analytics-error': 'Analytics data is currently unavailable.',
+        'analytics-empty': 'Analytics data will appear here once stories are recorded.',
+        'analytics-category-chart-title': 'Transformations by category',
+        'analytics-category-chart-description': 'Comparison of documented transformations across focus areas.',
+        'analytics-monthly-chart-title': 'Monthly transformation trend',
+        'analytics-monthly-chart-description': 'Monthly count of recorded transformations.',
+        'analytics-category-bar-label': '{label}: {count} transformations',
+        'analytics-monthly-bar-label': '{label}: {count} transformations',
         'true-state-title': '🧭 Defining the True Human State',
         'true-state-subtitle':
             'The "ideal state" is co-created with AGI reflections, community wisdom, and personal life-line metrics.',
@@ -107,6 +119,18 @@ export const translations = Object.freeze({
         'trust-label': 'Уровень Доверия',
         'readiness-label': 'Развёртывание',
         'transformation-count-label': 'Люди Получили Помощь',
+        'analytics-title': '📈 Аналитика трансформаций',
+        'analytics-subtitle': 'Визуальные сводки по категориям и помесячной динамике.',
+        'analytics-visuals-label': 'Визуализации аналитики трансформаций',
+        'analytics-loading': 'Загрузка аналитики…',
+        'analytics-error': 'Данные аналитики недоступны.',
+        'analytics-empty': 'Как только появятся истории, здесь отобразится аналитика.',
+        'analytics-category-chart-title': 'Трансформации по категориям',
+        'analytics-category-chart-description': 'Сравнение задокументированных трансформаций по направлениям.',
+        'analytics-monthly-chart-title': 'Помесячная динамика трансформаций',
+        'analytics-monthly-chart-description': 'Количество трансформаций за каждый месяц.',
+        'analytics-category-bar-label': '{label}: {count} трансформаций',
+        'analytics-monthly-bar-label': '{label}: {count} трансформаций',
         'true-state-title': '🧭 Определяем истинное состояние человека',
         'true-state-subtitle':
             '«Идеальное состояние» мы строим вместе: через рефлексии ИИ, живые голоса сообщества и персональную линию жизни.',
@@ -172,6 +196,41 @@ export const statusContent = Object.freeze({
     }
 });
 
+const analyticsCategoryLabels = Object.freeze({
+    en: {
+        mental_health: 'Mental health',
+        relationships: 'Relationships',
+        career_purpose: 'Career & purpose',
+        personal_growth: 'Personal growth',
+        physical_health: 'Physical health',
+        financial_wellbeing: 'Financial wellbeing',
+        education_learning: 'Education & learning',
+        spiritual_growth: 'Spiritual growth',
+        community_social: 'Community & social',
+        creative_expression: 'Creative expression'
+    },
+    ru: {
+        mental_health: 'Психическое здоровье',
+        relationships: 'Отношения',
+        career_purpose: 'Карьера и предназначение',
+        personal_growth: 'Личностный рост',
+        physical_health: 'Физическое здоровье',
+        financial_wellbeing: 'Финансовое благополучие',
+        education_learning: 'Образование и обучение',
+        spiritual_growth: 'Духовный рост',
+        community_social: 'Сообщество и социальность',
+        creative_expression: 'Творческое выражение'
+    }
+});
+
+const analyticsConfig = Object.freeze({
+    source: 'data/transformations/analytics.json',
+    containerId: 'analytics-visuals'
+});
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+let analyticsChartIdCounter = 0;
+
 export const supportedLanguages = Object.freeze(Object.keys(translations));
 
 const trueStateApproaches = Object.freeze([
@@ -191,6 +250,11 @@ const state = {
         riskKey: 'medium',
         trustKey: 'medium',
         readinessKey: 'caution'
+    },
+    analytics: {
+        data: null,
+        error: null,
+        isLoading: false
     },
     activeTrueStateApproach: trueStateApproaches[0]?.slug ?? null
 };
@@ -346,6 +410,471 @@ function formatValueDisplayLabel(def, value, lang, strings = getLanguageStrings(
     const prefix = strings['slider-value-label'] ?? 'Current value';
     const decimal = formatDecimal(value, lang);
     return `${prefix}: ${decimal} — ${label}`;
+}
+
+function nextAnalyticsId(prefix) {
+    analyticsChartIdCounter += 1;
+    return `${prefix}-${analyticsChartIdCounter}`;
+}
+
+function formatTemplate(strings, key, replacements) {
+    const template = strings[key];
+    if (typeof template !== 'string') {
+        return '';
+    }
+    return template.replace(/\{(\w+)\}/g, (match, token) => {
+        if (Object.prototype.hasOwnProperty.call(replacements, token)) {
+            const value = replacements[token];
+            return value == null ? '' : String(value);
+        }
+        return '';
+    });
+}
+
+function fallbackCategoryLabel(key) {
+    return String(key)
+        .split(/[_-]+/)
+        .filter(Boolean)
+        .map(segment => segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase())
+        .join(' ');
+}
+
+function getCategoryLabel(key, lang) {
+    const dictionary = analyticsCategoryLabels[lang] ?? analyticsCategoryLabels.en ?? {};
+    return dictionary[key] ?? fallbackCategoryLabel(key);
+}
+
+function parseMonthKey(monthKey) {
+    const [yearPart, monthPart] = String(monthKey).split('-');
+    const year = Number.parseInt(yearPart, 10);
+    const monthIndex = Number.parseInt(monthPart, 10);
+    if (!Number.isFinite(year) || !Number.isFinite(monthIndex)) {
+        return null;
+    }
+    return new Date(year, monthIndex - 1, 1);
+}
+
+function formatMonthLabel(monthKey, lang) {
+    const date = parseMonthKey(monthKey);
+    if (!date) {
+        return String(monthKey);
+    }
+    return new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(date);
+}
+
+function formatMonthAxisLabel(monthKey, lang) {
+    const date = parseMonthKey(monthKey);
+    if (!date) {
+        return String(monthKey);
+    }
+    return new Intl.DateTimeFormat(lang, { month: 'short', year: '2-digit' }).format(date);
+}
+
+function normalizeAnalyticsData(raw) {
+    if (!raw || typeof raw !== 'object') {
+        return {
+            totalStories: 0,
+            categoryBreakdown: [],
+            monthlyTrend: []
+        };
+    }
+
+    const categories = Object.entries(raw.category_breakdown ?? {}).map(([key, value]) => ({
+        key,
+        value: Number.isFinite(Number(value)) ? Number(value) : 0
+    }));
+
+    categories.sort((a, b) => b.value - a.value);
+
+    const monthlyTrend = Object.entries(raw.stories_per_month ?? {})
+        .map(([key, value]) => ({
+            key,
+            value: Number.isFinite(Number(value)) ? Number(value) : 0,
+            date: parseMonthKey(key)
+        }))
+        .filter(entry => entry.date instanceof Date && !Number.isNaN(entry.date.getTime()))
+        .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    return {
+        totalStories: Number.isFinite(Number(raw.total_stories)) ? Number(raw.total_stories) : 0,
+        categoryBreakdown: categories,
+        monthlyTrend
+    };
+}
+
+function hasAnalyticsData(data) {
+    if (!data) {
+        return false;
+    }
+    const hasCategories = Array.isArray(data.categoryBreakdown) && data.categoryBreakdown.length > 0;
+    const hasMonthly = Array.isArray(data.monthlyTrend) && data.monthlyTrend.length > 0;
+    return hasCategories || hasMonthly;
+}
+
+function createSvgElement(doc, tagName) {
+    if (typeof doc.createElementNS === 'function') {
+        return doc.createElementNS(SVG_NS, tagName);
+    }
+    const element = doc.createElement(tagName);
+    element.namespaceURI = SVG_NS;
+    return element;
+}
+
+function getAnalyticsContainer(doc) {
+    if (!doc) {
+        return null;
+    }
+    return doc.getElementById(analyticsConfig.containerId);
+}
+
+function ensureAnalyticsContainer(container, strings) {
+    if (!container) {
+        return;
+    }
+    container.setAttribute('role', 'group');
+    container.setAttribute('aria-live', 'polite');
+    container.setAttribute('aria-atomic', 'true');
+    container.setAttribute('aria-label', strings['analytics-visuals-label'] ?? 'Analytics visuals');
+}
+
+function createAnalyticsList(doc, items) {
+    const list = doc.createElement('ul');
+    list.className = 'analytics-data-list';
+    list.setAttribute('role', 'list');
+
+    items.forEach(text => {
+        const item = doc.createElement('li');
+        item.setAttribute('role', 'listitem');
+        item.textContent = text;
+        list.appendChild(item);
+    });
+
+    return list;
+}
+
+function createCategoryChart(doc, dataset, strings, lang) {
+    const entries = dataset.map(entry => {
+        const label = getCategoryLabel(entry.key, lang);
+        const countText = formatInteger(entry.value, lang);
+        const accessible =
+            formatTemplate(strings, 'analytics-category-bar-label', { label, count: countText }) ||
+            `${label}: ${countText}`;
+        return { ...entry, label, countText, accessible };
+    });
+
+    const figure = doc.createElement('figure');
+    figure.className = 'analytics-chart analytics-chart--categories';
+    figure.setAttribute('role', 'group');
+
+    const headingId = nextAnalyticsId('analytics-chart-title');
+    const descriptionId = nextAnalyticsId('analytics-chart-description');
+
+    const heading = doc.createElement('h3');
+    heading.className = 'analytics-chart-title';
+    heading.id = headingId;
+    heading.textContent = strings['analytics-category-chart-title'] ?? 'Transformations by category';
+    figure.appendChild(heading);
+
+    const description = doc.createElement('p');
+    description.className = 'analytics-chart-description';
+    description.id = descriptionId;
+    description.textContent = strings['analytics-category-chart-description'] ?? '';
+    figure.appendChild(description);
+
+    const chartWidth = 420;
+    const barHeight = 32;
+    const gap = 12;
+    const labelColumn = 160;
+    const horizontalPadding = 16;
+    const topPadding = 24;
+    const bottomPadding = 24;
+    const valueArea = chartWidth - labelColumn - horizontalPadding;
+    const chartHeight =
+        topPadding + bottomPadding + entries.length * barHeight + Math.max(0, entries.length - 1) * gap;
+    const maxValue = entries.reduce((max, entry) => Math.max(max, entry.value), 0);
+
+    const svg = createSvgElement(doc, 'svg');
+    svg.setAttribute('class', 'analytics-svg analytics-svg--horizontal');
+    svg.setAttribute('viewBox', `0 0 ${chartWidth} ${Math.max(chartHeight, 1)}`);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-labelledby', `${headingId} ${descriptionId}`);
+    svg.setAttribute('focusable', 'false');
+
+    entries.forEach((entry, index) => {
+        const y = topPadding + index * (barHeight + gap);
+        const ratio = maxValue > 0 ? entry.value / maxValue : 0;
+        const barWidth = ratio * valueArea;
+        const group = createSvgElement(doc, 'g');
+
+        const rect = createSvgElement(doc, 'rect');
+        rect.setAttribute('class', 'analytics-bar');
+        rect.setAttribute('x', labelColumn);
+        rect.setAttribute('y', y);
+        rect.setAttribute('width', Math.max(barWidth, 0));
+        rect.setAttribute('height', barHeight);
+        rect.setAttribute('rx', 4);
+        const title = createSvgElement(doc, 'title');
+        title.textContent = entry.accessible;
+        rect.appendChild(title);
+        group.appendChild(rect);
+
+        const labelText = createSvgElement(doc, 'text');
+        labelText.setAttribute('class', 'analytics-bar-label');
+        labelText.setAttribute('x', labelColumn - 8);
+        labelText.setAttribute('y', y + barHeight / 2);
+        labelText.setAttribute('text-anchor', 'end');
+        labelText.setAttribute('dominant-baseline', 'middle');
+        labelText.textContent = entry.label;
+        group.appendChild(labelText);
+
+        const valueText = createSvgElement(doc, 'text');
+        valueText.setAttribute('class', 'analytics-bar-value');
+        const proposedX = labelColumn + barWidth + 8;
+        const clampedX = Math.min(proposedX, chartWidth - 4);
+        valueText.setAttribute('x', clampedX);
+        valueText.setAttribute('y', y + barHeight / 2);
+        valueText.setAttribute('dominant-baseline', 'middle');
+        valueText.setAttribute('text-anchor', proposedX > clampedX ? 'end' : 'start');
+        valueText.textContent = entry.countText;
+        group.appendChild(valueText);
+
+        svg.appendChild(group);
+    });
+
+    figure.appendChild(svg);
+
+    const list = createAnalyticsList(
+        doc,
+        entries.map(entry => entry.accessible)
+    );
+    figure.appendChild(list);
+
+    return figure;
+}
+
+function createMonthlyChart(doc, dataset, strings, lang) {
+    const entries = dataset.map(entry => {
+        const label = formatMonthLabel(entry.key, lang);
+        const axisLabel = formatMonthAxisLabel(entry.key, lang);
+        const countText = formatInteger(entry.value, lang);
+        const accessible =
+            formatTemplate(strings, 'analytics-monthly-bar-label', { label, count: countText }) ||
+            `${label}: ${countText}`;
+        return { ...entry, label, axisLabel, countText, accessible };
+    });
+
+    const figure = doc.createElement('figure');
+    figure.className = 'analytics-chart analytics-chart--monthly';
+    figure.setAttribute('role', 'group');
+
+    const headingId = nextAnalyticsId('analytics-chart-title');
+    const descriptionId = nextAnalyticsId('analytics-chart-description');
+
+    const heading = doc.createElement('h3');
+    heading.className = 'analytics-chart-title';
+    heading.id = headingId;
+    heading.textContent = strings['analytics-monthly-chart-title'] ?? 'Monthly transformation trend';
+    figure.appendChild(heading);
+
+    const description = doc.createElement('p');
+    description.className = 'analytics-chart-description';
+    description.id = descriptionId;
+    description.textContent = strings['analytics-monthly-chart-description'] ?? '';
+    figure.appendChild(description);
+
+    const barWidth = 40;
+    const gap = 28;
+    const topPadding = 16;
+    const bottomPadding = 64;
+    const leftPadding = 32;
+    const rightPadding = 32;
+    const valueHeight = 180;
+    const chartWidth = Math.max(entries.length * (barWidth + gap) + leftPadding + rightPadding - gap, 180);
+    const chartHeight = topPadding + bottomPadding + valueHeight;
+    const axisY = topPadding + valueHeight;
+    const maxValue = entries.reduce((max, entry) => Math.max(max, entry.value), 0);
+
+    const svg = createSvgElement(doc, 'svg');
+    svg.setAttribute('class', 'analytics-svg analytics-svg--vertical');
+    svg.setAttribute('viewBox', `0 0 ${chartWidth} ${chartHeight}`);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-labelledby', `${headingId} ${descriptionId}`);
+    svg.setAttribute('focusable', 'false');
+
+    const axis = createSvgElement(doc, 'line');
+    axis.setAttribute('class', 'analytics-axis');
+    axis.setAttribute('x1', leftPadding);
+    axis.setAttribute('y1', axisY);
+    axis.setAttribute('x2', chartWidth - rightPadding);
+    axis.setAttribute('y2', axisY);
+    svg.appendChild(axis);
+
+    entries.forEach((entry, index) => {
+        const x = leftPadding + index * (barWidth + gap);
+        const ratio = maxValue > 0 ? entry.value / maxValue : 0;
+        const barHeight = ratio * valueHeight;
+        const y = axisY - barHeight;
+
+        const rect = createSvgElement(doc, 'rect');
+        rect.setAttribute('class', 'analytics-bar');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', y);
+        rect.setAttribute('width', barWidth);
+        rect.setAttribute('height', barHeight);
+        rect.setAttribute('rx', 4);
+        const title = createSvgElement(doc, 'title');
+        title.textContent = entry.accessible;
+        rect.appendChild(title);
+        svg.appendChild(rect);
+
+        const valueText = createSvgElement(doc, 'text');
+        valueText.setAttribute('class', 'analytics-bar-value');
+        valueText.setAttribute('x', x + barWidth / 2);
+        valueText.setAttribute('y', y - 6);
+        valueText.setAttribute('text-anchor', 'middle');
+        valueText.textContent = entry.countText;
+        svg.appendChild(valueText);
+
+        const labelText = createSvgElement(doc, 'text');
+        labelText.setAttribute('class', 'analytics-bar-label');
+        labelText.setAttribute('x', x + barWidth / 2);
+        labelText.setAttribute('y', axisY + 20);
+        labelText.setAttribute('text-anchor', 'middle');
+        labelText.textContent = entry.axisLabel;
+        svg.appendChild(labelText);
+    });
+
+    figure.appendChild(svg);
+
+    const list = createAnalyticsList(
+        doc,
+        entries.map(entry => entry.accessible)
+    );
+    figure.appendChild(list);
+
+    return figure;
+}
+
+function renderAnalyticsCharts(doc, container, data, strings) {
+    if (!container) {
+        return;
+    }
+    container.textContent = '';
+    container.setAttribute('aria-busy', 'false');
+
+    const lang = state.currentLanguage;
+    const { categoryBreakdown = [], monthlyTrend = [] } = data;
+
+    if (categoryBreakdown.length) {
+        container.appendChild(createCategoryChart(doc, categoryBreakdown, strings, lang));
+    }
+
+    if (monthlyTrend.length) {
+        container.appendChild(createMonthlyChart(doc, monthlyTrend, strings, lang));
+    }
+}
+
+function renderAnalyticsLoading(doc, container, strings) {
+    if (!container) {
+        return;
+    }
+    container.textContent = '';
+    container.setAttribute('aria-busy', 'true');
+    const message = doc.createElement('p');
+    message.className = 'analytics-status analytics-status--loading';
+    message.textContent = strings['analytics-loading'] ?? 'Loading analytics…';
+    container.appendChild(message);
+}
+
+function renderAnalyticsError(doc, container, strings) {
+    if (!container) {
+        return;
+    }
+    container.textContent = '';
+    container.setAttribute('aria-busy', 'false');
+    const message = doc.createElement('p');
+    message.className = 'analytics-status analytics-status--error';
+    message.textContent = strings['analytics-error'] ?? 'Analytics data is unavailable.';
+    container.appendChild(message);
+}
+
+function renderAnalyticsEmpty(doc, container, strings) {
+    if (!container) {
+        return;
+    }
+    container.textContent = '';
+    container.setAttribute('aria-busy', 'false');
+    const message = doc.createElement('p');
+    message.className = 'analytics-status analytics-status--empty';
+    message.textContent = strings['analytics-empty'] ?? 'Analytics data is not yet available.';
+    container.appendChild(message);
+}
+
+function renderAnalyticsState(doc) {
+    const container = getAnalyticsContainer(doc);
+    if (!container) {
+        return;
+    }
+    const strings = getLanguageStrings(state.currentLanguage);
+    ensureAnalyticsContainer(container, strings);
+
+    if (state.analytics.isLoading) {
+        renderAnalyticsLoading(doc, container, strings);
+        return;
+    }
+
+    if (state.analytics.error) {
+        renderAnalyticsError(doc, container, strings);
+        return;
+    }
+
+    if (!hasAnalyticsData(state.analytics.data)) {
+        renderAnalyticsEmpty(doc, container, strings);
+        return;
+    }
+
+    renderAnalyticsCharts(doc, container, state.analytics.data, strings);
+}
+
+export async function refreshAnalyticsVisuals(doc = document, options = {}) {
+    const container = getAnalyticsContainer(doc);
+    const fetchImpl = options.fetch ?? doc?.defaultView?.fetch ?? globalThis.fetch;
+
+    if (!container) {
+        return null;
+    }
+
+    if (typeof fetchImpl !== 'function') {
+        state.analytics.data = null;
+        state.analytics.error = new Error('Fetch API is not available');
+        state.analytics.isLoading = false;
+        renderAnalyticsState(doc);
+        return null;
+    }
+
+    state.analytics.isLoading = true;
+    state.analytics.error = null;
+    renderAnalyticsState(doc);
+
+    try {
+        const response = await fetchImpl(analyticsConfig.source, { cache: 'no-cache' });
+        if (!response || !response.ok) {
+            throw new Error(`Failed to load analytics (${response?.status ?? 'unknown'})`);
+        }
+        const payload = await response.json();
+        const normalized = normalizeAnalyticsData(payload);
+        state.analytics.data = normalized;
+        state.analytics.error = null;
+        state.analytics.isLoading = false;
+        renderAnalyticsState(doc);
+        return normalized;
+    } catch (error) {
+        state.analytics.data = null;
+        state.analytics.error = error;
+        state.analytics.isLoading = false;
+        renderAnalyticsState(doc);
+        return null;
+    }
 }
 
 function renderSliders(doc) {
@@ -627,6 +1156,7 @@ export function changeLanguage(doc, lang) {
     });
 
     renderAssessment(doc);
+    renderAnalyticsState(doc);
     return language;
 }
 
@@ -679,7 +1209,7 @@ function validateTranslationsOnInit(doc) {
 
 export function initializeApp(doc = document) {
     if (!doc) {
-        return;
+        return Promise.resolve(null);
     }
 
     renderSliders(doc);
@@ -688,6 +1218,10 @@ export function initializeApp(doc = document) {
     attachCardInteractions(doc);
     attachSliderListeners(doc);
     attachTrueStateListeners(doc);
+
+    state.analytics.data = null;
+    state.analytics.error = null;
+    state.analytics.isLoading = false;
 
     sliderDefinitions.forEach(def => {
         const value = clampValue(def.defaultValue, def.min, def.max);
@@ -703,8 +1237,16 @@ export function initializeApp(doc = document) {
     updateOverallAssessment(doc);
     changeLanguage(doc, state.currentLanguage);
     validateTranslationsOnInit(doc);
+    return refreshAnalyticsVisuals(doc);
 }
 
 if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => initializeApp(document));
+    document.addEventListener('DOMContentLoaded', () => {
+        const maybePromise = initializeApp(document);
+        if (maybePromise && typeof maybePromise.catch === 'function') {
+            maybePromise.catch(error => {
+                console.error('[init] Failed to initialize analytics visuals', error);
+            });
+        }
+    });
 }

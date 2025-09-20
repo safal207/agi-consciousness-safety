@@ -403,6 +403,12 @@ class MockDocument {
         return new MockElement(tagName, this);
     }
 
+    createElementNS(namespaceURI, qualifiedName) {
+        const element = this.createElement(qualifiedName);
+        element.namespaceURI = namespaceURI;
+        return element;
+    }
+
     getElementById(id) {
         const element = this._idMap.get(id);
         if (element && this._isConnected(element)) {
@@ -589,6 +595,39 @@ export function createMockDocument() {
         const item = createResultItem(doc, valueId, defaultText, labelId, labelKey);
         resultsGrid.appendChild(item);
     });
+
+    const analyticsSection = doc.createElement('section');
+    analyticsSection.className = 'analytics-section';
+    analyticsSection.setAttribute('aria-labelledby', 'analytics-title');
+    container.appendChild(analyticsSection);
+
+    const analyticsTitle = doc.createElement('h2');
+    analyticsTitle.className = 'section-title';
+    analyticsTitle.id = 'analytics-title';
+    setDataI18n(analyticsTitle, 'analytics-title');
+    analyticsSection.appendChild(analyticsTitle);
+
+    const analyticsSubtitle = doc.createElement('p');
+    analyticsSubtitle.className = 'section-subtitle';
+    analyticsSubtitle.id = 'analytics-subtitle';
+    setDataI18n(analyticsSubtitle, 'analytics-subtitle');
+    analyticsSection.appendChild(analyticsSubtitle);
+
+    const analyticsVisuals = doc.createElement('div');
+    analyticsVisuals.className = 'analytics-visuals';
+    analyticsVisuals.id = 'analytics-visuals';
+    analyticsVisuals.setAttribute('role', 'group');
+    analyticsVisuals.setAttribute('aria-live', 'polite');
+    analyticsVisuals.setAttribute('aria-atomic', 'true');
+    analyticsVisuals.setAttribute('aria-busy', 'false');
+    analyticsVisuals.setAttribute('data-i18n-attr', 'aria-label');
+    analyticsVisuals.setAttribute('data-i18n-attr-key', 'analytics-visuals-label');
+    analyticsSection.appendChild(analyticsVisuals);
+
+    const analyticsPlaceholder = doc.createElement('p');
+    analyticsPlaceholder.className = 'analytics-placeholder';
+    setDataI18n(analyticsPlaceholder, 'analytics-loading');
+    analyticsVisuals.appendChild(analyticsPlaceholder);
 
     const trueStateSection = doc.createElement('section');
     trueStateSection.className = 'true-state-section';

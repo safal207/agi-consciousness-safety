@@ -26,9 +26,9 @@ function formatInteger(value, lang) {
     }).format(Math.round(value));
 }
 
-test('initializeApp renders sliders, default values, and assessment snapshot', () => {
+test('initializeApp renders sliders, default values, and assessment snapshot', async () => {
     const doc = createMockDocument();
-    initializeApp(doc);
+    await initializeApp(doc);
     changeLanguage(doc, 'en');
 
     const groups = doc.querySelectorAll('.control-group');
@@ -85,9 +85,9 @@ test('initializeApp renders sliders, default values, and assessment snapshot', (
     });
 });
 
-test('changeLanguage applies translations, aria states, and locale formatting', () => {
+test('changeLanguage applies translations, aria states, and locale formatting', async () => {
     const doc = createMockDocument();
-    initializeApp(doc);
+    await initializeApp(doc);
     changeLanguage(doc, 'en');
 
     const ruLanguage = changeLanguage(doc, 'ru');
@@ -124,9 +124,9 @@ test('changeLanguage applies translations, aria states, and locale formatting', 
     assert.equal(keyboardEvent.defaultPrevented, true);
 });
 
-test('slider interactions clamp values, update styles, and recalculate assessment', () => {
+test('slider interactions clamp values, update styles, and recalculate assessment', async () => {
     const doc = createMockDocument();
-    initializeApp(doc);
+    await initializeApp(doc);
     changeLanguage(doc, 'en');
 
     const decimalEn = value => formatDecimal(value, 'en');
@@ -169,9 +169,9 @@ test('slider interactions clamp values, update styles, and recalculate assessmen
     );
 });
 
-test('true state approaches toggle panels and aria metadata', () => {
+test('true state approaches toggle panels and aria metadata', async () => {
     const doc = createMockDocument();
-    initializeApp(doc);
+    await initializeApp(doc);
     changeLanguage(doc, 'en');
 
     const aiButton = doc.getElementById('true-state-ai-button');
@@ -200,9 +200,77 @@ test('true state approaches toggle panels and aria metadata', () => {
     assert.equal(lifelinePanel.hasAttribute('hidden'), false);
 });
 
-test('findMissingTranslationKeys reports no gaps for supported languages', () => {
+test('analytics visuals render accessible charts and localized labels', async () => {
     const doc = createMockDocument();
-    initializeApp(doc);
+    const sampleData = {
+        total_stories: 5,
+        category_breakdown: {
+            mental_health: 12,
+            relationships: 4
+        },
+        stories_per_month: {
+            '2025-01': 2,
+            '2025-02': 3
+        }
+    };
+
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () => ({
+        ok: true,
+        json: async () => sampleData
+    });
+
+    try {
+        await initializeApp(doc);
+        changeLanguage(doc, 'en');
+
+        const container = doc.getElementById('analytics-visuals');
+        assert.ok(container, 'expected analytics container');
+        assert.equal(container.getAttribute('role'), 'group');
+        assert.equal(container.getAttribute('aria-live'), 'polite');
+        assert.equal(container.getAttribute('aria-label'), translations.en['analytics-visuals-label']);
+
+        const svgElements = container.querySelectorAll('svg');
+        assert.ok(svgElements.length >= 1, 'expected at least one svg chart');
+        assert.equal(svgElements[0].getAttribute('role'), 'img');
+
+        const englishList = container.querySelector('.analytics-data-list');
+        assert.ok(englishList, 'expected textual summaries');
+        const englishItems = englishList.children ?? [];
+        assert.ok(englishItems.length > 0, 'expected textual summaries');
+        assert.ok(
+            englishItems[0].textContent.includes(formatInteger(sampleData.category_breakdown.mental_health, 'en')),
+            'english summary should include localized count'
+        );
+
+        changeLanguage(doc, 'ru');
+
+        assert.equal(container.getAttribute('aria-label'), translations.ru['analytics-visuals-label']);
+        const russianList = container.querySelector('.analytics-data-list');
+        assert.ok(russianList, 'expected russian summaries');
+        const russianItems = russianList.children ?? [];
+        assert.ok(russianItems.length > 0, 'expected russian summaries');
+        assert.ok(
+            russianItems[0].textContent.includes(formatInteger(sampleData.category_breakdown.mental_health, 'ru')),
+            'russian summary should include localized count'
+        );
+        assert.ok(
+            russianItems[0].textContent.includes('Психическое здоровье'),
+            'russian summary should include translated category label'
+        );
+
+        const firstRect = container.querySelector('svg')?.querySelector('rect');
+        const titleElement = firstRect?.children?.find(child => child.tagName === 'TITLE');
+        assert.ok(titleElement, 'expected accessible title on bar');
+        assert.ok(titleElement.textContent.includes('трансформаций'));
+    } finally {
+        globalThis.fetch = originalFetch;
+    }
+});
+
+test('findMissingTranslationKeys reports no gaps for supported languages', async () => {
+    const doc = createMockDocument();
+    await initializeApp(doc);
     changeLanguage(doc, 'en');
 
     const missing = findMissingTranslationKeys(doc);
