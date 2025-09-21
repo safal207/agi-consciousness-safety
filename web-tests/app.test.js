@@ -8,6 +8,7 @@ import {
     getAssessmentSnapshot,
     getCurrentLanguage,
     initializeApp,
+    supportedLanguages,
     sliderDefinitions,
     statusContent,
     translations
@@ -25,6 +26,14 @@ function formatInteger(value, lang) {
         maximumFractionDigits: 0
     }).format(Math.round(value));
 }
+
+const languageButtonKeyMap = {
+    en: 'english',
+    es: 'spanish',
+    ru: 'russian',
+    'zh-Hans': 'chinese',
+    ar: 'arabic'
+};
 
 test('initializeApp renders sliders, default values, and assessment snapshot', () => {
     const doc = createMockDocument();
@@ -88,38 +97,54 @@ test('initializeApp renders sliders, default values, and assessment snapshot', (
 test('changeLanguage applies translations, aria states, and locale formatting', () => {
     const doc = createMockDocument();
     initializeApp(doc);
-    changeLanguage(doc, 'en');
+    changeLanguage(doc, supportedLanguages[0]);
 
-    const ruLanguage = changeLanguage(doc, 'ru');
-    assert.equal(ruLanguage, 'ru');
-    assert.equal(getCurrentLanguage(), 'ru');
-    assert.equal(doc.documentElement.getAttribute('lang'), 'ru');
+    supportedLanguages.forEach(lang => {
+        const activeLang = changeLanguage(doc, lang);
+        assert.equal(activeLang, lang);
+        assert.equal(getCurrentLanguage(), lang);
+        assert.equal(doc.documentElement.getAttribute('lang'), lang);
 
-    const ruTranslations = translations.ru;
-    assert.equal(doc.getElementById('main-title').textContent, ruTranslations['main-title']);
-    assert.equal(doc.getElementById('risk-label').textContent, ruTranslations['risk-label']);
-    assert.equal(doc.getElementById('risk-level').textContent, statusContent.ru.risk_medium);
+        const strings = translations[lang];
+        assert.ok(strings, `expected translations for ${lang}`);
+        const statuses = statusContent[lang];
+        assert.ok(statuses, `expected status content for ${lang}`);
 
-    const enButton = doc.querySelector('[data-lang="en"]');
+        assert.equal(doc.getElementById('main-title').textContent, strings['main-title']);
+        assert.equal(doc.getElementById('risk-label').textContent, strings['risk-label']);
+        assert.equal(doc.getElementById('risk-level').textContent, statuses.risk_medium);
+
+        const compassionSlider = doc.getElementById('compassion-slider');
+        const ariaValueText = compassionSlider.getAttribute('aria-valuetext') ?? '';
+        assert.ok(
+            ariaValueText.includes(strings['compassion-title'] ?? ''),
+            'aria-valuetext should include translated label'
+        );
+
+        const compassionValue = doc.getElementById('compassion-value');
+        assert.equal(compassionValue.textContent, formatDecimal(0.8, lang));
+        const valueLabel = compassionValue.getAttribute('aria-label') ?? '';
+        assert.ok(valueLabel.includes(strings['slider-value-label']));
+        assert.ok(valueLabel.includes(strings['compassion-title']));
+
+        const snapshot = getAssessmentSnapshot();
+        const transformationDisplay = doc.getElementById('transformation-count').textContent;
+        assert.equal(transformationDisplay, formatInteger(snapshot.peopleHelped, lang));
+
+        const toggleButtons = Array.from(doc.querySelectorAll('.lang-btn'));
+        toggleButtons.forEach(button => {
+            const buttonLang = button.dataset.lang;
+            const baseKey = languageButtonKeyMap[buttonLang];
+            assert.ok(baseKey, `expected translation key for button ${buttonLang}`);
+            assert.equal(button.textContent, strings[`language-button-${baseKey}`]);
+            assert.equal(button.getAttribute('aria-label'), strings[`language-button-${baseKey}-aria`]);
+            const isActive = buttonLang === lang;
+            assert.equal(button.getAttribute('aria-pressed'), String(isActive));
+        });
+    });
+
     const ruButton = doc.querySelector('[data-lang="ru"]');
-    assert.equal(ruButton.getAttribute('aria-label'), ruTranslations['language-button-russian-aria']);
-    assert.equal(enButton.getAttribute('aria-label'), ruTranslations['language-button-english-aria']);
-    assert.equal(enButton.getAttribute('aria-pressed'), 'false');
-    assert.equal(ruButton.getAttribute('aria-pressed'), 'true');
-
-    const compassionSlider = doc.getElementById('compassion-slider');
-    const ariaValueText = compassionSlider.getAttribute('aria-valuetext');
-    assert.ok(
-        ariaValueText.includes(ruTranslations['compassion-title'] ?? ''),
-        'aria-valuetext should include translated label'
-    );
-
-    const ruValue = doc.getElementById('compassion-value').textContent;
-    assert.equal(ruValue, formatDecimal(0.8, 'ru'));
-    const ruAriaLabel = doc.getElementById('compassion-value').getAttribute('aria-label');
-    assert.ok(ruAriaLabel.includes(ruTranslations['slider-value-label']));
-    assert.ok(ruAriaLabel.includes(ruTranslations['compassion-title']));
-
+    assert.ok(ruButton, 'expected Russian language button to exist');
     const keyboardEvent = fireEvent(ruButton, 'keydown', { key: ' ' });
     assert.equal(keyboardEvent.defaultPrevented, true);
 });
