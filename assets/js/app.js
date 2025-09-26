@@ -91,16 +91,16 @@ export const translations = Object.freeze({
         'demo-subtitle': 'Настройте ползунки, чтобы увидеть, как сочетаются сознание, безопасность и сострадание в нашей модели.',
         'slider-roledescription': 'Интерактивный ползунок',
         'slider-value-label': 'Текущее значение',
-        'consciousness-title': 'Уровень Сознания',
+        'consciousness-title': 'Уровень сознания',
         'consciousness-desc': 'Самосознание и понимание',
-        'safety-title': 'Оценка Безопасности',
+        'safety-title': 'Оценка безопасности',
         'safety-desc': 'Техническая и этическая безопасность',
-        'compassion-title': 'Уровень Сострадания',
+        'compassion-title': 'Уровень сострадания',
         'compassion-desc': 'Эмпатия и забота о людях',
-        'benefit-title': 'Польза Человеку',
+        'benefit-title': 'Польза человеку',
         'benefit-desc': 'Положительное воздействие на человечество',
-        'transformation-title': 'Человеческая Трансформация',
-        'transformation-desc': 'Людям, которым ИИ помогли достичь идеального состояния',
+        'transformation-title': 'Человеческая трансформация',
+        'transformation-desc': 'Людям, которым ИИ помог достичь идеального состояния',
         'assessment-title': 'Результаты Оценки AGI в Реальном Времени',
         'overall-label': 'Общий Счёт',
         'risk-label': 'Уровень Риска',
@@ -290,10 +290,22 @@ export function clampValue(value, min = 0, max = 1) {
 }
 
 function parseInputValue(raw, min, max) {
-    const numeric = Number.parseFloat(String(raw));
+    let numeric = raw;
+
+    if (typeof numeric === 'string') {
+        const trimmed = numeric.trim();
+        const normalized = trimmed.includes('.') ? trimmed : trimmed.replace(',', '.');
+        numeric = Number.parseFloat(normalized);
+    }
+
+    if (typeof numeric !== 'number') {
+        numeric = Number.parseFloat(String(numeric));
+    }
+
     if (!Number.isFinite(numeric)) {
         return min;
     }
+
     return clampValue(numeric, min, max);
 }
 
