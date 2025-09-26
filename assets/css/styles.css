@@ -302,6 +302,7 @@ body {
     font-size: 0.92rem;
     opacity: 0.9;
     letter-spacing: 0.04em;
+    overflow-wrap: anywhere;
 }
 
 .true-state-approach-list {
