@@ -91,16 +91,16 @@ export const translations = Object.freeze({
         'demo-subtitle': 'Настройте ползунки, чтобы увидеть, как сочетаются сознание, безопасность и сострадание в нашей модели.',
         'slider-roledescription': 'Интерактивный ползунок',
         'slider-value-label': 'Текущее значение',
-        'consciousness-title': 'Уровень Сознания',
+        'consciousness-title': 'Уровень сознания',
         'consciousness-desc': 'Самосознание и понимание',
-        'safety-title': 'Оценка Безопасности',
+        'safety-title': 'Оценка безопасности',
         'safety-desc': 'Техническая и этическая безопасность',
-        'compassion-title': 'Уровень Сострадания',
+        'compassion-title': 'Уровень сострадания',
         'compassion-desc': 'Эмпатия и забота о людях',
-        'benefit-title': 'Польза Человеку',
+        'benefit-title': 'Польза человеку',
         'benefit-desc': 'Положительное воздействие на человечество',
-        'transformation-title': 'Человеческая Трансформация',
-        'transformation-desc': 'Людям, которым ИИ помогли достичь идеального состояния',
+        'transformation-title': 'Человеческая трансформация',
+        'transformation-desc': 'Людям, которым ИИ помог достичь идеального состояния',
         'assessment-title': 'Результаты Оценки AGI в Реальном Времени',
         'overall-label': 'Общий Счёт',
         'risk-label': 'Уровень Риска',
@@ -289,11 +289,61 @@ export function clampValue(value, min = 0, max = 1) {
     return Math.min(max, Math.max(min, value));
 }
 
+function parseLocalizedNumber(value) {
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return Number.NaN;
+    }
+
+    const withoutNbsp = trimmed.replace(/\u00A0/g, ' ');
+    const signMatch = withoutNbsp.match(/^[+-]/);
+    const sign = signMatch ? signMatch[0] : '';
+
+    let normalized = withoutNbsp.slice(sign.length);
+    normalized = normalized.replace(/[\s]/g, '');
+    normalized = normalized.replace(/[^0-9.,]/g, '');
+
+    if (!normalized) {
+        return Number.NaN;
+    }
+
+    const lastComma = normalized.lastIndexOf(',');
+    const lastDot = normalized.lastIndexOf('.');
+    const decimalIndex = Math.max(lastComma, lastDot);
+
+    let numberString;
+    if (decimalIndex !== -1) {
+        const integerPart = normalized.slice(0, decimalIndex).replace(/[.,]/g, '');
+        const fractionalPart = normalized.slice(decimalIndex + 1).replace(/[.,]/g, '');
+        const safeInteger = integerPart || '0';
+        numberString = fractionalPart ? `${safeInteger}.${fractionalPart}` : `${safeInteger}.`;
+    } else {
+        numberString = normalized.replace(/[.,]/g, '');
+    }
+
+    if (!numberString || numberString === '.') {
+        return Number.NaN;
+    }
+
+    const signed = `${sign}${numberString}`;
+    return Number.parseFloat(signed);
+}
+
 function parseInputValue(raw, min, max) {
-    const numeric = Number.parseFloat(String(raw));
+    let numeric = raw;
+
+    if (typeof numeric === 'string') {
+        numeric = parseLocalizedNumber(numeric);
+    }
+
+    if (typeof numeric !== 'number') {
+        numeric = Number.parseFloat(String(numeric));
+    }
+
     if (!Number.isFinite(numeric)) {
         return min;
     }
+
     return clampValue(numeric, min, max);
 }
 
