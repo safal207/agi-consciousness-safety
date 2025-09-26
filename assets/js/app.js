@@ -539,7 +539,19 @@ export function setSliderValue(doc, defOrSlug, rawValue, options = {}) {
     }
 
     const { updateState = true, render = true } = options;
-    const sanitized = clampValue(rawValue, def.min, def.max);
+    let numeric = rawValue;
+
+    if (typeof numeric === 'string') {
+        numeric = parseLocalizedNumber(numeric);
+    } else if (typeof numeric !== 'number') {
+        numeric = Number.parseFloat(String(numeric));
+    }
+
+    if (!Number.isFinite(numeric)) {
+        numeric = Number.NaN;
+    }
+
+    const sanitized = clampValue(numeric, def.min, def.max);
     const elements = sliderElements.get(def.slug);
     if (!elements) {
         return sanitized;
