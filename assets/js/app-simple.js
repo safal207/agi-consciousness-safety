@@ -7,20 +7,6 @@ const translations = {
         'main-title': '🌸 AGI Consciousness & Safety',
         'subtitle': 'Revolutionary approach to safe and conscious AI',
         'lotus-quote': '"The lotus blossoms in muddy water - true consciousness emerges from complexity and challenge"',
-        'true-state-title': '🧭 Defining the True Human State',
-        'true-state-subtitle': 'The "ideal state" is co-created with AGI reflections, community wisdom, and personal life-line metrics.',
-        'true-state-approach-ai-title': 'Reflective AGI interviews',
-        'true-state-approach-ai-description': 'Our AGI conducts guided dialogues to surface what flourishing means for each individual and explains its reasoning transparently.',
-        'true-state-approach-ai-point-1': 'Conversational probes uncover intentions, fears, and aspirations in real time.',
-        'true-state-approach-ai-point-2': 'The agent drafts well-being maps that humans can approve, remix, or reject.',
-        'true-state-approach-community-title': 'Human wisdom panels',
-        'true-state-approach-community-description': 'Trusted circles vote on meaningful outcomes so that cultural context and personal choice stay in balance.',
-        'true-state-approach-community-point-1': 'Surveys gather sentiment from mentors, peers, and caregivers.',
-        'true-state-approach-community-point-2': 'Consensus scores feed into the AGI safety thresholds and fairness checks.',
-        'true-state-approach-lifeline-title': 'Personal life-line metrics',
-        'true-state-approach-lifeline-description': 'Each person curates evolving milestones and biopsychosocial markers with the AGI as a reflective partner.',
-        'true-state-approach-lifeline-point-1': 'Individuals and AGI co-edit rituals, recovery plans, and celebrations.',
-        'true-state-approach-lifeline-point-2': 'Longitudinal signals show progress without overriding autonomy.',
         'philosophy-section-title': '🧠 Our Philosophy',
         'philosophy-subtitle': 'AGI Safety = Compassion + Consciousness + Human Benefit',
         'compassion-card-title': 'Compassion',
@@ -43,20 +29,6 @@ const translations = {
         'main-title': '🌸 AGI Сознание и Безопасность',
         'subtitle': 'Революционный подход к безопасному и осознанному ИИ',
         'lotus-quote': '"Лотос расцветает в мутной воде - истинное сознание возникает из сложности и испытаний"',
-        'true-state-title': '🧭 Определяем истинное состояние человека',
-        'true-state-subtitle': '«Идеальное состояние» мы строим вместе: через рефлексии ИИ, живые голоса сообщества и персональную линию жизни.',
-        'true-state-approach-ai-title': 'Рефлексивные интервью с ИИ',
-        'true-state-approach-ai-description': 'Наш агент проводит направленные беседы, раскрывая понимание процветания для каждого человека и открыто объясняя выводы.',
-        'true-state-approach-ai-point-1': 'Диалоговые вопросы выявляют намерения, страхи и мечты в реальном времени.',
-        'true-state-approach-ai-point-2': 'Агент предлагает карты благополучия, которые человек может принять, переработать или отклонить.',
-        'true-state-approach-community-title': 'Панели человеческой мудрости',
-        'true-state-approach-community-description': 'Доверенные круги голосуют за значимые результаты, сохраняя баланс культурного контекста и личного выбора.',
-        'true-state-approach-community-point-1': 'Опросы собирают мнение наставников, друзей и близких.',
-        'true-state-approach-community-point-2': 'Консенсусные оценки подпитывают пороги безопасности и проверки справедливости ИИ.',
-        'true-state-approach-lifeline-title': 'Персональная линия жизни',
-        'true-state-approach-lifeline-description': 'Каждый человек ведёт живой дашборд этапов и био-психо-социальных маркеров вместе с ИИ-наставником.',
-        'true-state-approach-lifeline-point-1': 'Человек и ИИ совместно редактируют ритуалы, планы восстановления и праздники.',
-        'true-state-approach-lifeline-point-2': 'Долгосрочные сигналы показывают движение вперёд, не лишая автономии.',
         'philosophy-section-title': '🧠 Наша Философия',
         'philosophy-subtitle': 'Безопасность AGI = Сострадание + Сознание + Польза Человеку',
         'compassion-card-title': 'Сострадание',
@@ -76,8 +48,7 @@ const translations = {
 
 // Состояние приложения
 const state = {
-    currentLanguage: 'en',
-    activeTrueStateApproach: 'ai'
+    currentLanguage: 'en'
 };
 
 // Функции
@@ -109,31 +80,6 @@ function changeLanguage(lang) {
     });
 }
 
-function activateTrueStateApproach(slug) {
-    const approaches = ['ai', 'community', 'lifeline'];
-    
-    approaches.forEach(approach => {
-        const button = document.getElementById(`true-state-${approach}-button`);
-        const panel = document.getElementById(`true-state-panel-${approach}`);
-        
-        if (button && panel) {
-            const isActive = approach === slug;
-            button.setAttribute('aria-expanded', String(isActive));
-            button.classList.toggle('is-active', isActive);
-            
-            if (isActive) {
-                panel.hidden = false;
-                panel.removeAttribute('hidden');
-            } else {
-                panel.hidden = true;
-                panel.setAttribute('hidden', 'true');
-            }
-            panel.setAttribute('aria-hidden', String(!isActive));
-        }
-    });
-    
-    state.activeTrueStateApproach = slug;
-}
 
 function initializeApp() {
     // Привязываем обработчики кнопок языка
@@ -156,19 +102,8 @@ function initializeApp() {
         });
     });
 
-    // Привязываем обработчики true-state подходов
-    ['ai', 'community', 'lifeline'].forEach(approach => {
-        const button = document.getElementById(`true-state-${approach}-button`);
-        if (button) {
-            button.addEventListener('click', () => activateTrueStateApproach(approach));
-        }
-    });
-
     // Инициализируем переводы
     applyTranslations(state.currentLanguage);
-    
-    // Активируем первый подход
-    activateTrueStateApproach(state.activeTrueStateApproach);
 }
 
 // Запускаем приложение когда DOM загружен
