@@ -8,6 +8,7 @@ import {
     getAssessmentSnapshot,
     getCurrentLanguage,
     initializeApp,
+    setSliderValue,
     sliderDefinitions,
     statusContent,
     translations
@@ -175,6 +176,7 @@ test('slider input accepts localized decimal formats with spaces and mixed separ
     changeLanguage(doc, 'en');
 
     const consciousnessSlider = doc.getElementById('consciousness-slider');
+    const valueDisplay = doc.getElementById('consciousness-value');
 
     const cases = [
         { raw: ' 0,75 ', expected: 0.75 },
@@ -185,11 +187,19 @@ test('slider input accepts localized decimal formats with spaces and mixed separ
     ];
 
     cases.forEach(({ raw, expected }) => {
+        const sanitized = setSliderValue(doc, 'consciousness', raw, { updateState: true, render: true });
+
+        assert.equal(sanitized, expected);
+        assert.equal(consciousnessSlider.value, String(expected));
+        assert.equal(consciousnessSlider.getAttribute('aria-valuenow'), expected.toFixed(2));
+        assert.equal(valueDisplay.textContent, formatDecimal(expected, 'en'));
+
         consciousnessSlider.value = raw;
         fireEvent(consciousnessSlider, 'input', { target: consciousnessSlider });
 
         assert.equal(consciousnessSlider.value, String(expected));
         assert.equal(consciousnessSlider.getAttribute('aria-valuenow'), expected.toFixed(2));
+        assert.equal(valueDisplay.textContent, formatDecimal(expected, 'en'));
     });
 });
 
