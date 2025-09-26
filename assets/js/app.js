@@ -289,13 +289,52 @@ export function clampValue(value, min = 0, max = 1) {
     return Math.min(max, Math.max(min, value));
 }
 
+function parseLocalizedNumber(value) {
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return Number.NaN;
+    }
+
+    const withoutNbsp = trimmed.replace(/\u00A0/g, ' ');
+    const signMatch = withoutNbsp.match(/^[+-]/);
+    const sign = signMatch ? signMatch[0] : '';
+
+    let normalized = withoutNbsp.slice(sign.length);
+    normalized = normalized.replace(/[\s]/g, '');
+    normalized = normalized.replace(/[^0-9.,]/g, '');
+
+    if (!normalized) {
+        return Number.NaN;
+    }
+
+    const lastComma = normalized.lastIndexOf(',');
+    const lastDot = normalized.lastIndexOf('.');
+    const decimalIndex = Math.max(lastComma, lastDot);
+
+    let numberString;
+    if (decimalIndex !== -1) {
+        const integerPart = normalized.slice(0, decimalIndex).replace(/[.,]/g, '');
+        const fractionalPart = normalized.slice(decimalIndex + 1).replace(/[.,]/g, '');
+        const safeInteger = integerPart || '0';
+        numberString = fractionalPart ? `${safeInteger}.${fractionalPart}` : `${safeInteger}.`;
+    } else {
+        numberString = normalized.replace(/[.,]/g, '');
+    }
+
+    if (!numberString || numberString === '.') {
+        return Number.NaN;
+    }
+
+    const signed = `${sign}${numberString}`;
+    return Number.parseFloat(signed);
+}
+
 function parseInputValue(raw, min, max) {
     let numeric = raw;
 
     if (typeof numeric === 'string') {
-        const trimmed = numeric.trim();
-        const normalized = trimmed.includes('.') ? trimmed : trimmed.replace(',', '.');
-        numeric = Number.parseFloat(normalized);
+        numeric = parseLocalizedNumber(numeric);
+
     }
 
     if (typeof numeric !== 'number') {

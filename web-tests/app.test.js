@@ -169,6 +169,30 @@ test('slider interactions clamp values, update styles, and recalculate assessmen
     );
 });
 
+test('slider input accepts localized decimal formats with spaces and mixed separators', () => {
+    const doc = createMockDocument();
+    initializeApp(doc);
+    changeLanguage(doc, 'en');
+
+    const consciousnessSlider = doc.getElementById('consciousness-slider');
+
+    const cases = [
+        { raw: ' 0,75 ', expected: 0.75 },
+        { raw: '0.25', expected: 0.25 },
+        { raw: ',5', expected: 0.5 },
+        { raw: '1.234,56', expected: 1 },
+        { raw: '1 234,56', expected: 1 }
+    ];
+
+    cases.forEach(({ raw, expected }) => {
+        consciousnessSlider.value = raw;
+        fireEvent(consciousnessSlider, 'input', { target: consciousnessSlider });
+
+        assert.equal(consciousnessSlider.value, String(expected));
+        assert.equal(consciousnessSlider.getAttribute('aria-valuenow'), expected.toFixed(2));
+    });
+});
+
 test('true state approaches toggle panels and aria metadata', () => {
     const doc = createMockDocument();
     initializeApp(doc);
