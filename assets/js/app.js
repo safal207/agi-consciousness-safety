@@ -334,6 +334,7 @@ function parseInputValue(raw, min, max) {
 
     if (typeof numeric === 'string') {
         numeric = parseLocalizedNumber(numeric);
+
     }
 
     if (typeof numeric !== 'number') {
